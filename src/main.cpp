@@ -9,7 +9,7 @@
 #include <print>  //C++23, bortkommentera temporärt om Fel
 
 int main(int argc, char* argv[]) {
-	std::string s1 = "Hejsan";
+	std::string s1 = "Hejsannfhgjfegj";
 	std::cout << s1 << std::endl;
 
 	//Bortkommentera temporärt följande om Fel 
