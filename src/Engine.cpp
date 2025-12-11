@@ -39,6 +39,11 @@ namespace demo{
                         for(SpritePtr spr : sprites)
                             spr->onMouseDown(event);
                         break;
+                    case SDL_EVENT_KEY_UP: {
+                        for (SpritePtr spr : sprites) {
+                            spr->onKeyUp();
+                        }
+                    }
                     case SDL_EVENT_KEY_DOWN:
                         if(event.key.key == SDLK_ESCAPE){
                             running = false; 
@@ -48,12 +53,6 @@ namespace demo{
                             spr->onKeyDown(event);
                         }
                         break;
-                    case SDL_EVENT_KEY_UP: {
-                        for (SpritePtr spr : sprites) {
-                            spr->onKeyUp();
-                        }
-                        break;
-                    }
                 // Fler händelser utelämnade för minska kodmängden i exemplet
                 } // switch
             } // while event
