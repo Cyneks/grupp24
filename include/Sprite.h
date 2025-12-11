@@ -17,6 +17,7 @@ namespace demo{
             bool collidedWith(SpritePtr other) const;
             virtual void onCollisionWith(SpritePtr other) {}
             virtual void onKeyDown(const SDL_Event& event) {}
+            virtual void onKeyUp() {}
 
             Sprite(const Sprite& other) = delete;
             const Sprite& operator=(const Sprite& other) = delete;

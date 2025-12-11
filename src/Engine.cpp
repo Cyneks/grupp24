@@ -48,6 +48,12 @@ namespace demo{
                             spr->onKeyDown(event);
                         }
                         break;
+                    case SDL_EVENT_KEY_UP: {
+                        for (SpritePtr spr : sprites) {
+                            spr->onKeyUp();
+                        }
+                        break;
+                    }
                 // Fler händelser utelämnade för minska kodmängden i exemplet
                 } // switch
             } // while event

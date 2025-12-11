@@ -22,7 +22,7 @@ class Boll : public Sprite {
 public:
     Boll(int x):Sprite("football.png", x,400){}
     void tick() override {
-        //move(0,-5);
+        move(xSpeed, ySpeed);
         if (getRect().y < 0){
            eng.remove(shared_from_this());
         }
@@ -38,25 +38,47 @@ public:
 		const bool *key_states = SDL_GetKeyboardState(0);
 		
 		if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_D]){
-			move(5,-5);
-		} else if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
-			move(-5,-5);
-		} else if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
-			move(5,5);
-		} else if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
-			move(-5,5);
-		} else if(key_states[SDL_SCANCODE_W]){
-			move(0,-5);
-		} else if(key_states[SDL_SCANCODE_A]){
-			move(-5,0);
-		} else if(key_states[SDL_SCANCODE_D]){
-			move(5,0);
-		} else if(key_states[SDL_SCANCODE_S]){
-			move(0,5);
+            xSpeed = 5;
+            ySpeed = -5;
+		}
+        if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
+            xSpeed = -5;
+            ySpeed = -5;
+		}
+        if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
+            xSpeed = 5;
+            ySpeed = 5;
+		}
+        if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
+            xSpeed = -5;
+            ySpeed = 5;
+		}
+        if(key_states[SDL_SCANCODE_W]){
+            ySpeed = -5;
+		}
+        if(key_states[SDL_SCANCODE_A]){
+            xSpeed = -5;
+		}
+        if(key_states[SDL_SCANCODE_D]){
+            xSpeed = 5;
+		}
+        if(key_states[SDL_SCANCODE_S]){
+            ySpeed = 5;
 		}
 	}
+    void onKeyUp() {
+        const bool *key_states = SDL_GetKeyboardState(0);
+        if (!key_states[SDL_SCANCODE_A] || !key_states[SDL_SCANCODE_D]) {
+            xSpeed = 0;
+        }
+        if (!key_states[SDL_SCANCODE_W] || !key_states[SDL_SCANCODE_S]) {
+            ySpeed = 0;
+        }
+    }
 private:
     bool done = false;
+    int xSpeed = 0;
+    int ySpeed = 0;
 };
 
 /*
@@ -72,9 +94,9 @@ public:
 
 int main(){
     SpritePtr ball = SpritePtr(new Boll(300));
-    SpritePtr goal = SpritePtr(new Goal);
+    //SpritePtr goal = SpritePtr(new Goal);
     
     eng.add(ball);
-    eng.add(goal);
+    //eng.add(goal);
     eng.run();
 }
