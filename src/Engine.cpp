@@ -40,6 +40,10 @@ namespace demo{
                             spr->onMouseDown(event);
                         break;
                     case SDL_EVENT_KEY_DOWN:
+                        if(event.key.key == SDLK_ESCAPE){
+                            running = false; 
+                            break;
+                        }
                         for (SpritePtr spr : sprites) {
                             spr->onKeyDown(event);
                         }
@@ -56,7 +60,7 @@ namespace demo{
             added.clear();
 
             for(SpritePtr spr : removed){
-                for(int pos = 0; pos < sprites.size(); pos++){
+                for(unsigned int pos = 0; pos < sprites.size(); pos++){
                     auto iter = sprites.begin() + pos;
                     if (spr == *iter) {
                         sprites.erase(iter);

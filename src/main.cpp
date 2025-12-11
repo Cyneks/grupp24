@@ -35,20 +35,24 @@ public:
         } // if
     }
 	void onKeyDown(const SDL_Event& event) {
-		switch (event.key.key) {
-			case SDLK_W: {
-				move(0, -5);
-				break;
-			}
-			case SDLK_S: {
-				move(0, 5); break;
-			}
-			case SDLK_A: {
-				move(-5, 0); break;
-			}
-			case SDLK_D: {
-				move(5, 0); break;
-			}
+		const bool *key_states = SDL_GetKeyboardState(0);
+		
+		if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_D]){
+			move(5,-5);
+		} else if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
+			move(-5,-5);
+		} else if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
+			move(5,5);
+		} else if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
+			move(-5,5);
+		} else if(key_states[SDL_SCANCODE_W]){
+			move(0,-5);
+		} else if(key_states[SDL_SCANCODE_A]){
+			move(-5,0);
+		} else if(key_states[SDL_SCANCODE_D]){
+			move(5,0);
+		} else if(key_states[SDL_SCANCODE_S]){
+			move(0,5);
 		}
 	}
 private:
