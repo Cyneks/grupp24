@@ -1,21 +1,76 @@
-/*
-  c++_empty
-  skriver ut innehållet i strängen 's1' på 'consol out'
-*/ 
-
+#include "Engine.h"
+#include <memory>
+#include "Sprite.h"
+#include <cstdlib>
 #include <iostream>
-#include <string>
-#include <format> //C++20, bortkommentera temporärt om Fel
-#include <print>  //C++23, bortkommentera temporärt om Fel
+using namespace demo;
+using namespace std;
 
-int main(int argc, char* argv[]) {
-	std::string s1 = "Hejsannfhgjfegj";
-	std::cout << s1 << std::endl;
+class Goal : public Sprite{
+public:
+    Goal():Sprite("goal.png",10,0){}
+    void tick() override {
+        if (static_cast<double>(rand()) / RAND_MAX < 0.01 || getRect().x > cnts::gScreenWidth - getRect().w || getRect().x < 0)
+            direction = -direction;
+        move(5*direction,0);
+    }
+private:
+    int direction = 1;
+};
 
-	//Bortkommentera temporärt följande om Fel 
-	std::cout << std::format("{}-format\n",s1);// C++20
-	std::println("{}-{}!", s1, "println" );    // C++23
-	std::print("{}-{}!\n", s1, "print" );      // C++23
-	
-	return 0;
+class Boll : public Sprite {
+public:
+    Boll(int x):Sprite("football.png", x,400){}
+    void tick() override {
+        //move(0,-5);
+        if (getRect().y < 0){
+           eng.remove(shared_from_this());
+        }
+    }
+    void onCollisionWith(SpritePtr other) override {
+        if (dynamic_pointer_cast<Goal>(other) && !done){
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Grattis!", "Mål!", eng.getWin());
+            eng.remove(shared_from_this());
+            done = true;
+        } // if
+    }
+	void onKeyDown(const SDL_Event& event) {
+		switch (event.key.key) {
+			case SDLK_W: {
+				move(0, -5);
+				break;
+			}
+			case SDLK_S: {
+				move(0, 5); break;
+			}
+			case SDLK_A: {
+				move(-5, 0); break;
+			}
+			case SDLK_D: {
+				move(5, 0); break;
+			}
+		}
+	}
+private:
+    bool done = false;
+};
+
+/*
+class Kicker : public Sprite{
+public:
+    void tick() override {}
+    void onMouseDown(const SDL_Event& event) override{
+        SpritePtr spr = SpritePtr(new Boll(event.button.x));
+        eng.add(spr);
+    }
+};
+*/
+
+int main(){
+    SpritePtr ball = SpritePtr(new Boll(300));
+    SpritePtr goal = SpritePtr(new Goal);
+    
+    eng.add(ball);
+    eng.add(goal);
+    eng.run();
 }
