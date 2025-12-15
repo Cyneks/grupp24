@@ -36,43 +36,45 @@ public:
         }
     }
     void onCollisionWith(SpritePtr other) override {
-        if (dynamic_pointer_cast<Goal>(other) && !done){
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Grattis!", "Mål!", eng.getWin());
-            eng.remove(shared_from_this());
-            done = true;
-        } // if
+        if (dynamic_pointer_cast<Wall>(other)){
+            wallCollision = true;
+            xSpeed = 0;
+            ySpeed = 0;
+        } 
     }
 	void onKeyDown(const SDL_Event& event) {
 		const bool *key_states = SDL_GetKeyboardState(0);
-		
-		if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_D]){
+
+        if(!wallCollision){
+            if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_D]){
             xSpeed = 5;
             ySpeed = -5;
-		}
-        if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
-            xSpeed = -5;
-            ySpeed = -5;
-		}
-        if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
-            xSpeed = 5;
-            ySpeed = 5;
-		}
-        if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
-            xSpeed = -5;
-            ySpeed = 5;
-		}
-        if(key_states[SDL_SCANCODE_W]){
-            ySpeed = -5;
-		}
-        if(key_states[SDL_SCANCODE_A]){
-            xSpeed = -5;
-		}
-        if(key_states[SDL_SCANCODE_D]){
-            xSpeed = 5;
-		}
-        if(key_states[SDL_SCANCODE_S]){
-            ySpeed = 5;
-		}
+            }
+            if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
+                xSpeed = -5;
+                ySpeed = -5;
+            }
+            if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
+                xSpeed = 5;
+                ySpeed = 5;
+            }
+            if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
+                xSpeed = -5;
+                ySpeed = 5;
+            }
+            if(key_states[SDL_SCANCODE_W]){
+                ySpeed = -5;
+            }
+            if(key_states[SDL_SCANCODE_A]){
+                xSpeed = -5;
+            }
+            if(key_states[SDL_SCANCODE_D]){
+                xSpeed = 5;
+            }
+            if(key_states[SDL_SCANCODE_S]){
+                ySpeed = 5;
+            }
+        }
 	}
     void onKeyUp() {
         const bool *key_states = SDL_GetKeyboardState(0);
@@ -84,7 +86,7 @@ public:
         }
     }
 private:
-    bool done = false;
+    bool wallCollision = false;
     int xSpeed = 0;
     int ySpeed = 0;
 };
