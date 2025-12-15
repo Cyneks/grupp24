@@ -35,58 +35,59 @@ public:
            eng.remove(shared_from_this());
         }
     }
+
     void onCollisionWith(SpritePtr other) override {
         if (dynamic_pointer_cast<Wall>(other)){
-            wallCollision = true;
+            move(xSpeed * -1, ySpeed * -1);
+
             xSpeed = 0;
-            ySpeed = 0;
-        } 
+            ySpeed = 0; 
+                      
+        } //wall collision
     }
+
 	void onKeyDown(const SDL_Event& event) {
 		const bool *key_states = SDL_GetKeyboardState(0);
 
-        if(!wallCollision){
-            if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_D]){
+        if(key_states[SDL_SCANCODE_W]){
+            ySpeed = -5;
+        }
+        if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_D]){
             xSpeed = 5;
             ySpeed = -5;
-            }
-            if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
-                xSpeed = -5;
-                ySpeed = -5;
-            }
-            if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
-                xSpeed = 5;
-                ySpeed = 5;
-            }
-            if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
-                xSpeed = -5;
-                ySpeed = 5;
-            }
-            if(key_states[SDL_SCANCODE_W]){
-                ySpeed = -5;
-            }
-            if(key_states[SDL_SCANCODE_A]){
-                xSpeed = -5;
-            }
-            if(key_states[SDL_SCANCODE_D]){
-                xSpeed = 5;
-            }
-            if(key_states[SDL_SCANCODE_S]){
-                ySpeed = 5;
-            }
+        }
+        if(key_states[SDL_SCANCODE_D]){
+            xSpeed = 5;
+        }
+        if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_D]){
+            xSpeed = 5;
+            ySpeed = 5;
+        }
+        if(key_states[SDL_SCANCODE_S]){
+            ySpeed = 5;
+        }
+        if(key_states[SDL_SCANCODE_S] && key_states[SDL_SCANCODE_A]){
+            xSpeed = -5;
+            ySpeed = 5;
+        }
+        if(key_states[SDL_SCANCODE_A]){
+            xSpeed = -5;
+        }
+        if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
+            xSpeed = -5;
+            ySpeed = -5;
         }
 	}
     void onKeyUp() {
         const bool *key_states = SDL_GetKeyboardState(0);
-        if (!key_states[SDL_SCANCODE_A] || !key_states[SDL_SCANCODE_D]) {
+        if (!key_states[SDL_SCANCODE_A] && !key_states[SDL_SCANCODE_D]) {
             xSpeed = 0;
         }
-        if (!key_states[SDL_SCANCODE_W] || !key_states[SDL_SCANCODE_S]) {
+        if (!key_states[SDL_SCANCODE_W] && !key_states[SDL_SCANCODE_S]) {
             ySpeed = 0;
         }
     }
 private:
-    bool wallCollision = false;
     int xSpeed = 0;
     int ySpeed = 0;
 };

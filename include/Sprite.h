@@ -15,7 +15,7 @@ namespace demo{
             virtual void tick() = 0;
 
             //move to a moveable sprite class?
-            void move(int dx, int dy) { rect.x += dx; rect.y += dy; }
+            void move(int dx, int dy);
             bool collidedWith(SpritePtr other) const;
 
             //move to a moveable sprite class?
