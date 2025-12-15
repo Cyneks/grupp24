@@ -18,6 +18,14 @@ private:
     int direction = 1;
 };
 
+class Wall : public Sprite {
+public:
+    Wall() : Sprite("RedWall.png", 300, 200){}
+    void tick() override {}
+private:
+
+};
+
 class Boll : public Sprite {
 public:
     Boll(int x):Sprite("football.png", x,400){}
@@ -97,6 +105,7 @@ int main(){
     //SpritePtr goal = SpritePtr(new Goal);
     
     eng.add(ball);
+    eng.add(SpritePtr(new Wall()));
     //eng.add(goal);
     eng.run();
 }
