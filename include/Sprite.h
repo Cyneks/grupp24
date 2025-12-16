@@ -19,6 +19,7 @@ namespace demo{
             bool collidedWith(SpritePtr other) const;
 
             //move to a moveable sprite class?
+            virtual void interactWith(SpritePtr other) {}
             virtual void onCollisionWith(SpritePtr other) {}
             virtual void onKeyDown(const SDL_Event& event) {}
             virtual void onKeyUp() {}

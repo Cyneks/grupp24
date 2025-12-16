@@ -6,6 +6,8 @@
 using namespace demo;
 using namespace std;
 
+class Boll;
+
 class Goal : public Sprite{
 public:
     Goal():Sprite("goal.png",10,0){}
@@ -19,21 +21,40 @@ private:
 };
 
 //probably move to cpp and h files
-
-class Enemy : public Sprite {
-public:
-    Enemy() : Sprite("GreenEnemy.png", 100, 100){}
-    void tick() override {}
-private:
-};
-
-//probably move to cpp and h files
 class Wall : public Sprite {
 public:
     Wall() : Sprite("RedWall.png", 300, 200){}
     void tick() override {}
 private:
+};
 
+//probably move to cpp and h files
+class Enemy : public Sprite {
+public:
+    Enemy() : Sprite("GreenEnemy.png", 100, 100){}
+    void tick() override {
+        move(xSpeed, ySpeed);
+    }
+    
+    void interactWith(SpritePtr other) override {
+        if(dynamic_pointer_cast<Boll>(other)){
+            
+        }
+    }
+
+    void onCollisionWith(SpritePtr other) override {
+        if (dynamic_pointer_cast<Wall>(other)){
+            move(xSpeed * -1, ySpeed * -1);
+
+            xSpeed = 0;
+            ySpeed = 0; 
+                      
+        }
+    }
+private:
+    //maybe should already be declared in a moveable sprite class?
+    int xSpeed = 1;
+    int ySpeed = 1;
 };
 
 //probably move to cpp and h files

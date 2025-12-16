@@ -75,12 +75,17 @@ namespace demo{
             } // for spr
             removed.clear();
 
-            for(SpritePtr sp1 : sprites)
-                for(SpritePtr sp2 : sprites)
-                    if (sp1 != sp2 && sp1->collidedWith(sp2)){
-                        sp1->onCollisionWith(sp2);
-                        sp2->onCollisionWith(sp1);
+            for(SpritePtr sp1 : sprites){
+                for(SpritePtr sp2 : sprites){
+                    if (sp1 != sp2){
+                        sp1->interactWith(sp2);
+                        if(sp1->collidedWith(sp2)){
+                            sp1->onCollisionWith(sp2);
+                            sp2->onCollisionWith(sp1);
+                        }
                     }
+                }
+            }
 
            SDL_SetRenderDrawColor(ren,255,255,255,255);
             SDL_RenderClear(ren);
