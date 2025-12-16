@@ -38,7 +38,14 @@ public:
     
     void interactWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Boll>(other)){
-            
+            //spaceship operator?
+            if(getRect().x < other->getRect().x){ xSpeed = 1; }
+            if(getRect().x > other->getRect().x){ xSpeed = -1; }
+            if(getRect().x == other->getRect().x){ xSpeed = 0; }
+
+            if(getRect().y < other->getRect().y){ ySpeed = 1; }
+            if(getRect().y > other->getRect().y){ ySpeed = -1; }
+            if(getRect().y == other->getRect().y){ ySpeed = 0; }
         }
     }
 
