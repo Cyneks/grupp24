@@ -186,16 +186,13 @@ public:
         if(key_states[SDL_SCANCODE_UP]){
             SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -7));
             eng.add(spr);
-        }
-        if(key_states[SDL_SCANCODE_RIGHT]){
+        } else if(key_states[SDL_SCANCODE_RIGHT]){
             SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 7, 0));
             eng.add(spr);
-        }
-        if(key_states[SDL_SCANCODE_DOWN]){
+        } else if(key_states[SDL_SCANCODE_DOWN]){
             SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 7));
             eng.add(spr);
-        }
-        if(key_states[SDL_SCANCODE_LEFT]){
+        } else if(key_states[SDL_SCANCODE_LEFT]){
             SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -7, 0));
             eng.add(spr);
         }
