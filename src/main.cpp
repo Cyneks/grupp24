@@ -88,6 +88,34 @@ private:
     bool xCollision, yCollision;
 };
 
+class Bullet : public Sprite {
+public:
+    Bullet(int x, int y, int xs, int ys):Sprite("bullet.png", x,y), xSpeed(xs), ySpeed(ys) {}
+
+    void tick() override {
+        move(xSpeed, ySpeed);
+        
+        if (getRect().y < 0 - getRect().h || getRect().y > cnts::gScreenHeight || getRect().x < 0  - getRect().w || getRect().x > cnts::gScreenWidth){
+           eng.remove(shared_from_this());
+        }
+    }
+
+    void onCollisionWith(SpritePtr other) override {
+        if(dynamic_pointer_cast<Enemy>(other)){
+            eng.remove(other);
+            eng.remove(shared_from_this());
+        }
+        
+        if (dynamic_pointer_cast<Wall>(other)){
+            eng.remove(shared_from_this());
+        }
+    }
+
+private:
+    int xSpeed;
+    int ySpeed;
+};
+
 //probably move to cpp and h files
 class Boll : public Sprite {
 public:
@@ -152,6 +180,24 @@ public:
         if(key_states[SDL_SCANCODE_W] && key_states[SDL_SCANCODE_A]){
             xSpeed = -5;
             ySpeed = -5;
+        }
+
+        //Attacks
+        if(key_states[SDL_SCANCODE_UP]){
+            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -7));
+            eng.add(spr);
+        }
+        if(key_states[SDL_SCANCODE_RIGHT]){
+            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 7, 0));
+            eng.add(spr);
+        }
+        if(key_states[SDL_SCANCODE_DOWN]){
+            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 7));
+            eng.add(spr);
+        }
+        if(key_states[SDL_SCANCODE_LEFT]){
+            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -7, 0));
+            eng.add(spr);
         }
 	}
     void onKeyUp() {
