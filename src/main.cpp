@@ -18,6 +18,16 @@ private:
     int direction = 1;
 };
 
+//probably move to cpp and h files
+
+class Enemy : public Sprite {
+public:
+    Enemy() : Sprite("GreenEnemy.png", 100, 100){}
+    void tick() override {}
+private:
+};
+
+//probably move to cpp and h files
 class Wall : public Sprite {
 public:
     Wall() : Sprite("RedWall.png", 300, 200){}
@@ -26,17 +36,22 @@ private:
 
 };
 
+//probably move to cpp and h files
 class Boll : public Sprite {
 public:
     Boll(int x):Sprite("football.png", x,400){}
     void tick() override {
         move(xSpeed, ySpeed);
-        if (getRect().y < 0){
+        /*if (getRect().y < 0){
            eng.remove(shared_from_this());
-        }
+        }*/
     }
 
     void onCollisionWith(SpritePtr other) override {
+        if(dynamic_pointer_cast<Enemy>(other)){
+            eng.remove(shared_from_this());
+        }
+        
         if (dynamic_pointer_cast<Wall>(other)){
             move(xSpeed * -1, ySpeed * -1);
 
@@ -109,6 +124,7 @@ int main(){
     
     eng.add(ball);
     eng.add(SpritePtr(new Wall()));
+    eng.add(SpritePtr(new Enemy()));
     //eng.add(goal);
     eng.run();
 }

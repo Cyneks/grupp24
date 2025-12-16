@@ -5,6 +5,7 @@
 using namespace std;
 namespace demo{
     Sprite::Sprite(string name,float x,float y){
+        //only allow for png pictures? Can add ".png" then.
         image = IMG_LoadTexture(eng.getRen(), (cnts::gResPath + "/images/" + name).c_str());
         if (!image){
             cerr << "No such file: " << name << endl;
