@@ -34,34 +34,58 @@ public:
     Enemy() : Sprite("GreenEnemy.png", 100, 100){}
     void tick() override {
         move(xSpeed, ySpeed);
+        xCollision = false;
+        yCollision = false;
     }
     
     void interactWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Boll>(other)){
             //spaceship operator?
-            if(getRect().x < other->getRect().x){ xSpeed = 1; }
-            if(getRect().x > other->getRect().x){ xSpeed = -1; }
-            if(getRect().x == other->getRect().x){ xSpeed = 0; }
+            if(!xCollision){
+                if(getRect().x < other->getRect().x){ xSpeed = 1; }
+                if(getRect().x > other->getRect().x){ xSpeed = -1; }
+                if(getRect().x == other->getRect().x){ xSpeed = 0; }
+            }
 
-            if(getRect().y < other->getRect().y){ ySpeed = 1; }
-            if(getRect().y > other->getRect().y){ ySpeed = -1; }
-            if(getRect().y == other->getRect().y){ ySpeed = 0; }
+            if(!yCollision){
+                if(getRect().y < other->getRect().y){ ySpeed = 1; }
+                if(getRect().y > other->getRect().y){ ySpeed = -1; }
+                if(getRect().y == other->getRect().y){ ySpeed = 0; }
+            }
         }
     }
 
     void onCollisionWith(SpritePtr other) override {
-        if (dynamic_pointer_cast<Wall>(other)){
-            move(xSpeed * -1, ySpeed * -1);
-
+        if(dynamic_pointer_cast<Boll>(other)){
             xSpeed = 0;
-            ySpeed = 0; 
-                      
+            ySpeed = 0;
+            xCollision = true;
+            yCollision = true;
+        }
+        
+        if (dynamic_pointer_cast<Wall>(other)){            
+            move(-xSpeed, -ySpeed);
+
+            move(xSpeed, 0);
+            if(this->collidedWith(other)){
+                move(-xSpeed, 0);
+                xSpeed = 0;
+                xCollision = true;
+            }
+
+            move(0, ySpeed);
+            if(this->collidedWith(other)){
+                move(0, -ySpeed);
+                ySpeed = 0;
+                yCollision = true;
+            }
         }
     }
 private:
     //maybe should already be declared in a moveable sprite class?
     int xSpeed = 1;
     int ySpeed = 1;
+    bool xCollision, yCollision;
 };
 
 //probably move to cpp and h files
@@ -81,10 +105,19 @@ public:
         }
         
         if (dynamic_pointer_cast<Wall>(other)){
-            move(xSpeed * -1, ySpeed * -1);
+            move(-xSpeed, -ySpeed);
 
-            xSpeed = 0;
-            ySpeed = 0; 
+            move(xSpeed, 0);
+            if(this->collidedWith(other)){
+                move(-xSpeed, 0);
+                xSpeed = 0;
+            }
+
+            move(0, ySpeed);
+            if(this->collidedWith(other)){
+                move(0, -ySpeed);
+                ySpeed = 0;
+            }
                       
         } //wall collision
     }

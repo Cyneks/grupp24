@@ -78,11 +78,11 @@ namespace demo{
             for(SpritePtr sp1 : sprites){
                 for(SpritePtr sp2 : sprites){
                     if (sp1 != sp2){
-                        sp1->interactWith(sp2);
                         if(sp1->collidedWith(sp2)){
                             sp1->onCollisionWith(sp2);
                             sp2->onCollisionWith(sp1);
                         }
+                        sp1->interactWith(sp2);
                     }
                 }
             }
