@@ -122,6 +122,11 @@ public:
     Boll(int x):Sprite("football.png", x,400){}
     void tick() override {
         move(xSpeed, ySpeed);
+
+        if (attackTimer < 35) {
+            attackTimer++;
+        }
+
         /*if (getRect().y < 0){
            eng.remove(shared_from_this());
         }*/
@@ -182,20 +187,34 @@ public:
             ySpeed = -5;
         }
 
-        //Attacks
-        if(key_states[SDL_SCANCODE_UP]){
-            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -7));
-            eng.add(spr);
-        } else if(key_states[SDL_SCANCODE_RIGHT]){
-            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 7, 0));
-            eng.add(spr);
-        } else if(key_states[SDL_SCANCODE_DOWN]){
-            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 7));
-            eng.add(spr);
-        } else if(key_states[SDL_SCANCODE_LEFT]){
-            SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -7, 0));
-            eng.add(spr);
-        }
+        /*
+        Attacks
+        Move to its own class so that movement/attack inputs don't disturb eachother?
+        Not very noticeably on high (slow) attacktimers
+        */
+        if (attackTimer == 35) {
+            if(key_states[SDL_SCANCODE_UP]){
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -10));
+                eng.add(spr);
+
+                attackTimer = 0;
+            } else if(key_states[SDL_SCANCODE_RIGHT]){
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 10, 0));
+                eng.add(spr);
+                
+                attackTimer = 0;
+            } else if(key_states[SDL_SCANCODE_DOWN]){
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 10));
+                eng.add(spr);
+                
+                attackTimer = 0;
+            } else if(key_states[SDL_SCANCODE_LEFT]){
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -10, 0));
+                eng.add(spr);
+                
+                attackTimer = 0;
+            }
+        }    
 	}
     void onKeyUp() {
         const bool *key_states = SDL_GetKeyboardState(0);
@@ -209,6 +228,7 @@ public:
 private:
     int xSpeed = 0;
     int ySpeed = 0;
+    int attackTimer = 35;
 };
 
 /*
