@@ -31,7 +31,7 @@ private:
 //probably move to cpp and h files
 class Enemy : public Sprite {
 public:
-    Enemy() : Sprite("GreenEnemy.png", 100, 100){}
+    Enemy(int x, int y) : Sprite("GreenEnemy.png", x, y){}
     void tick() override {
         move(xSpeed, ySpeed);
         xCollision = false;
@@ -114,6 +114,24 @@ public:
 private:
     int xSpeed;
     int ySpeed;
+};
+
+class EnemySpawner : public Sprite {
+public:
+    void tick() override {
+        spawnRate++;
+        if(spawnRate >= 100){
+            srand(time(0));
+            int x = rand() % 2;
+            int y = rand() % 2;
+            eng.add(SpritePtr(new Enemy(xPos[x],yPos[y])));
+            spawnRate = 0;
+        }
+    }
+private:
+    int spawnRate = 100;
+    int xPos[2] = {0, 600};
+    int yPos[2] = {0, 450};
 };
 
 //probably move to cpp and h files
@@ -248,7 +266,7 @@ int main(){
     
     eng.add(ball);
     eng.add(SpritePtr(new Wall()));
-    eng.add(SpritePtr(new Enemy()));
+    eng.add(SpritePtr(new EnemySpawner()));
     //eng.add(goal);
     eng.run();
 }
