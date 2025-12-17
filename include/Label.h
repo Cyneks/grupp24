@@ -12,7 +12,7 @@ namespace demo{
             void setText(std::string);
             std::string getText() const;
         protected:
-            Label(int x, int y, int w, int h, std::string text);
+            Label(int x, int y, std::string text);
         private:
             SDL_FRect rect;
             std::string text;

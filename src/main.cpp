@@ -9,7 +9,6 @@ using namespace std;
 
 class Boll;
 
-
 class Goal : public Sprite{
 public:
     Goal():Sprite("goal.png",10,0){}
@@ -90,9 +89,20 @@ private:
     bool xCollision, yCollision;
 };
 
+class PointCounter : public Label {
+    public:
+        PointCounter(int x, int y) : Label(x,y,"Points: 0"){}
+        void tick() override {}
+        void addPoints(){
+            setText("Points: " + std::to_string(++points));
+        }
+    private:
+        int points = 0;
+};
+
 class Bullet : public Sprite {
 public:
-    Bullet(int x, int y, int xs, int ys):Sprite("bullet.png", x,y), xSpeed(xs), ySpeed(ys) {}
+    Bullet(int x, int y, int xs, int ys, shared_ptr<PointCounter> pc):Sprite("bullet.png", x,y), xSpeed(xs), ySpeed(ys), pointCounter(pc){}
 
     void tick() override {
         move(xSpeed, ySpeed);
@@ -104,8 +114,12 @@ public:
 
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
-            eng.remove(other);
-            eng.remove(shared_from_this());
+            if(!hit){
+                hit = true;
+                pointCounter->addPoints();
+                eng.remove(other);
+                eng.remove(shared_from_this());
+            }
         }
         
         if (dynamic_pointer_cast<Wall>(other)){
@@ -116,6 +130,8 @@ public:
 private:
     int xSpeed;
     int ySpeed;
+    shared_ptr<PointCounter> pointCounter;
+    bool hit = false;
 };
 
 class EnemySpawner : public Sprite {
@@ -136,18 +152,10 @@ private:
     int yPos[2] = {0, cnts::gScreenHeight};
 };
 
-class PointCounter : public Label {
-    public:
-        PointCounter(int x, int y ,int w, int h, string t) : Label(x,y,w,h,t){}
-        void tick() override {}
-    private:
-        int points;
-};
-
 //probably move to cpp and h files
 class Boll : public Sprite {
 public:
-    Boll(int x):Sprite("football.png", x,400){}
+    Boll(int x, LabelPtr label):Sprite("football.png", x,400), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
     void tick() override {
         move(xSpeed, ySpeed);
 
@@ -222,22 +230,22 @@ public:
         */
         if (attackTimer == 35) {
             if(key_states[SDL_SCANCODE_UP]){
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -10));
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -10,pointCounter));
                 eng.add(spr);
 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_RIGHT]){
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 10, 0));
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 10, 0,pointCounter));
                 eng.add(spr);
                 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_DOWN]){
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 10));
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 10,pointCounter));
                 eng.add(spr);
                 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_LEFT]){
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -10, 0));
+                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -10, 0,pointCounter));
                 eng.add(spr);
                 
                 attackTimer = 0;
@@ -257,6 +265,7 @@ private:
     int xSpeed = 0;
     int ySpeed = 0;
     int attackTimer = 35;
+    shared_ptr<PointCounter> pointCounter;
 };
 
 /*
@@ -271,11 +280,9 @@ public:
 */
 
 int main(){
-    SpritePtr ball = SpritePtr(new Boll(300));
+    LabelPtr label = LabelPtr(new PointCounter(10,10));
+    SpritePtr ball = SpritePtr(new Boll(300, label));
     //SpritePtr goal = SpritePtr(new Goal);
-    
-    LabelPtr label = LabelPtr(new PointCounter(10,10,0,0,"TEXT IS WRITTEN"));
-    //label->setText("NEW IS WRITTEN");
 
     eng.add(label);
     eng.add(ball);

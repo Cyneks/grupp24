@@ -3,7 +3,7 @@
 
 namespace demo{
 
-    Label::Label(int x, int y, int w, int h, std::string newText) : rect(x,y,w,h), text(newText), image(nullptr){
+    Label::Label(int x, int y, std::string newText) : rect(x,y,0,0), text(newText), image(nullptr){
         setText(text);
     }
 
