@@ -3,21 +3,33 @@
 
 namespace demo{
 
-    Label::Label(int x, int y, int w, int h, std::string newText) : rect(x,y,w,h), text(newText){}
-
-    Label::~Label(){
-        SDL_DestroyTexture(image);
+    Label::Label(int x, int y, int w, int h, std::string newText) : rect(x,y,w,h), text(newText), image(nullptr){
+        setText(text);
     }
 
-    void Label::draw() const{
+    Label::~Label(){
+        if(image){
+            SDL_DestroyTexture(image);
+        }
+    }
+
+    void Label::draw() const {
         SDL_RenderTexture(eng.getRen(), image, NULL, &rect);
     }
     
     void Label::setText(std::string newText){
         Label::text = newText;
-        SDL_DestroyTexture(image);
-        SDL_Surface* surface = TTF_RenderText_Solid(eng.getFont(),text.c_str(),0,{255,0,0});
+        if(image){
+            SDL_DestroyTexture(image);
+        }
+        SDL_Surface* surface = TTF_RenderText_Solid(eng.getFont(),text.c_str(),text.length(),{255,0,0, 255});
+        if(!surface){
+            SDL_Log("TTF_RenderText_Solid failed:");
+            return;
+        }
         image = SDL_CreateTextureFromSurface(eng.getRen(), surface);
+        rect.w = surface->w;
+        rect.h = surface->h;
         SDL_DestroySurface(surface);
     }
 

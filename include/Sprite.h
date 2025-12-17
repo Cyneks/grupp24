@@ -8,7 +8,7 @@ namespace demo{
     class Sprite : public std::enable_shared_from_this<Sprite>{
         public:
             virtual ~Sprite();
-            void draw() const; // Inte virtual
+            virtual void draw() const; // Inte virtual
             const SDL_FRect& getRect() const { return rect; }
             virtual void onMouseDown(const SDL_Event& event){}
             // move to a moveable sprite class?

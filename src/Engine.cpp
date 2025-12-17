@@ -9,6 +9,7 @@ namespace demo{
         ren = SDL_CreateRenderer(win, NULL);
         TTF_Init();
         font = TTF_OpenFont((cnts::gResPath + "fonts/INKFREE.TTF").c_str(), 24);
+        if(!font){SDL_Log("Font failed");}
         srand(time(NULL));
     }
 

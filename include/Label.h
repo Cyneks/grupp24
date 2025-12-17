@@ -8,7 +8,7 @@ namespace demo{
     class Label : public Sprite, public std::enable_shared_from_this<Label>{
         public:
             virtual ~Label();
-            void draw() const;
+            void draw() const override;
             void setText(std::string);
             std::string getText() const;
         protected:

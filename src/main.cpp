@@ -274,7 +274,8 @@ int main(){
     SpritePtr ball = SpritePtr(new Boll(300));
     //SpritePtr goal = SpritePtr(new Goal);
     
-    LabelPtr label = LabelPtr(new PointCounter(10,10,0,0,"hi"));
+    LabelPtr label = LabelPtr(new PointCounter(10,10,0,0,"TEXT IS WRITTEN"));
+    //label->setText("NEW IS WRITTEN");
 
     eng.add(label);
     eng.add(ball);
