@@ -1,12 +1,14 @@
 #include "Engine.h"
 #include <memory>
 #include "Sprite.h"
+#include "Label.h"
 #include <cstdlib>
 #include <iostream>
 using namespace demo;
 using namespace std;
 
 class Boll;
+
 
 class Goal : public Sprite{
 public:
@@ -120,7 +122,7 @@ class EnemySpawner : public Sprite {
 public:
     void tick() override {
         spawnRate++;
-        if(spawnRate >= 100){
+        if(spawnRate >= 60){
             srand(time(0));
             int x = rand() % 2;
             int y = rand() % 2;
@@ -129,9 +131,17 @@ public:
         }
     }
 private:
-    int spawnRate = 100;
-    int xPos[2] = {0, 600};
-    int yPos[2] = {0, 450};
+    int spawnRate = 60;
+    int xPos[2] = {0, cnts::gScreenWidth};
+    int yPos[2] = {0, cnts::gScreenHeight};
+};
+
+class PointCounter : public Label {
+    public:
+        PointCounter(int x, int y ,int w, int h, string t) : Label(x,y,w,h,t){}
+        void tick() override {}
+    private:
+        int points;
 };
 
 //probably move to cpp and h files
@@ -264,6 +274,9 @@ int main(){
     SpritePtr ball = SpritePtr(new Boll(300));
     //SpritePtr goal = SpritePtr(new Goal);
     
+    LabelPtr label = LabelPtr(new PointCounter(10,10,0,0,"hi"));
+
+    eng.add(label);
     eng.add(ball);
     eng.add(SpritePtr(new Wall()));
     eng.add(SpritePtr(new EnemySpawner()));

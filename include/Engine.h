@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 #include <memory>
 #include "Constants.h"
@@ -14,12 +15,14 @@ namespace demo{
             ~Engine();
             SDL_Renderer* getRen() const { return ren; }
             SDL_Window* getWin() const { return win; }
+            TTF_Font* getFont() const { return font; }
             void add(SpritePtr spr);
             void remove(SpritePtr spr);
             void run();
         private:
             SDL_Window* win;
             SDL_Renderer* ren;
+            TTF_Font* font;
             std::vector<SpritePtr> sprites, added, removed;
 
     };
