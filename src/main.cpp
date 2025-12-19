@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "Label.h"
 #include <cstdlib>
+#include <random>
 #include <iostream>
 using namespace demo;
 using namespace std;
@@ -134,20 +135,35 @@ private:
     bool hit = false;
 };
 
+//create random spawn coordinates for enemies
+random_device rd;
+mt19937 gen(rd());
+uniform_int_distribution<int> side(0,1);
+uniform_int_distribution<int> smallX(0, 1);
+uniform_int_distribution<int> smallY(0, 1);
+uniform_int_distribution<int> largeX(0, cnts::gScreenWidth);
+uniform_int_distribution<int> largeY(0, cnts::gScreenHeight);
+
 class EnemySpawner : public Sprite {
 public:
     void tick() override {
         spawnRate++;
         if(spawnRate >= 60){
-            srand(time(0));
-            int x = rand() % 2;
-            int y = rand() % 2;
-            eng.add(SpritePtr(new Enemy(xPos[x],yPos[y])));
-            spawnRate = 0;
-        }
+            if(side(gen)){
+                int x = largeX(gen);
+                int y = smallY(gen);
+                eng.add(SpritePtr(new Enemy(x,yPos[y])));
+                spawnRate = 0;
+            } else {
+                int x = smallX(gen);
+                int y = largeY(gen);
+                eng.add(SpritePtr(new Enemy(xPos[x],y)));
+                spawnRate = 0;
+            }
+        } //spawnrate if 
     }
 private:
-    int spawnRate = 60;
+    int spawnRate = 30;
     int xPos[2] = {0, cnts::gScreenWidth};
     int yPos[2] = {0, cnts::gScreenHeight};
 };
