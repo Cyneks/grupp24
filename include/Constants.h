@@ -6,8 +6,10 @@
 namespace constants
 {
     // Constants
-   	constexpr int gScreenWidth     { 640 };
-   	constexpr int gScreenHeight    { 480 };
+   	//constexpr int gScreenWidth     { 640 };
+   	//constexpr int gScreenHeight    { 480 };
+	constexpr int gScreenWidth     { 1080 };
+   	constexpr int gScreenHeight    { 720 };
    	// PATH TO YOUR RESOURCE FOLDER 'resources', 'gResPath'
    	const std::string gResPath { "./resources/" };
 	// PATH'S TO ALL YOUR EXTERNAL RESOURCES using 'gResPath'
