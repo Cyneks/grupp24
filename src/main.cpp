@@ -8,7 +8,7 @@
 using namespace demo;
 using namespace std;
 
-class Boll;
+class Player;
 
 class Goal : public Sprite{
 public:
@@ -41,7 +41,7 @@ public:
     }
     
     void interactWith(SpritePtr other) override {
-        if(dynamic_pointer_cast<Boll>(other)){
+        if(dynamic_pointer_cast<Player>(other)){
             //spaceship operator?
             if(!xCollision){
                 if(getRect().x < other->getRect().x){ xSpeed = 1; }
@@ -58,7 +58,7 @@ public:
     }
 
     void onCollisionWith(SpritePtr other) override {
-        if(dynamic_pointer_cast<Boll>(other)){
+        if(dynamic_pointer_cast<Player>(other)){
             xSpeed = 0;
             ySpeed = 0;
             xCollision = true;
@@ -169,9 +169,9 @@ private:
 };
 
 //probably move to cpp and h files
-class Boll : public Sprite {
+class Player : public Sprite {
 public:
-    Boll(int x, LabelPtr label):Sprite("football.png", x,400), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
+    Player(int x, LabelPtr label):Sprite("football.png", x,400), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
     void tick() override {
         move(xSpeed, ySpeed);
 
@@ -297,11 +297,11 @@ public:
 
 int main(){
     LabelPtr label = LabelPtr(new PointCounter(10,10));
-    SpritePtr ball = SpritePtr(new Boll(300, label));
+    SpritePtr player = SpritePtr(new Player(300, label));
     //SpritePtr goal = SpritePtr(new Goal);
 
     eng.add(label);
-    eng.add(ball);
+    eng.add(player);
     eng.add(SpritePtr(new Wall()));
     eng.add(SpritePtr(new EnemySpawner()));
     //eng.add(goal);
