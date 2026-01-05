@@ -14,6 +14,15 @@ namespace demo{
         rect = {x,y,static_cast<float>(image->w),static_cast<float>(image->h)};
     }
 
+    void Sprite::changeImage(std::string pic) {
+        image = IMG_LoadTexture(eng.getRen(), (cnts::gResPath + "/images/" + pic).c_str());
+        if(!image){
+            cerr << "No such file: " << pic << endl;
+            exit(EXIT_FAILURE);
+        }
+        rect = {getRect().x, getRect().y, static_cast<float>(image->w), static_cast<float>(image->h)};
+    }
+
     Sprite::~Sprite(){
         SDL_DestroyTexture(image);
     }

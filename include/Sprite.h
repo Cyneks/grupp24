@@ -13,6 +13,7 @@ namespace demo{
             virtual void onMouseDown(const SDL_Event& event){}
             // move to a moveable sprite class?
             virtual void tick() = 0;
+            virtual void changeImage(std::string);
 
             //move to a moveable sprite class?
             void move(int dx, int dy);

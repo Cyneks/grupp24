@@ -9,6 +9,7 @@ using namespace demo;
 using namespace std;
 
 class Player;
+class Bullet;
 
 class Goal : public Sprite{
 public:
@@ -26,8 +27,41 @@ private:
 class Wall : public Sprite {
 public:
     Wall() : Sprite("RedWall.png", 300, 200){}
-    void tick() override {}
+    void tick() override {
+        if(collided){
+            health--;
+            collided = false;
+        }
+        switch(health){
+            case 1:{
+                changeImage("RedWall_05.png");
+                break;
+            }
+            case 2:{
+                changeImage("RedWall_04.png");
+                break;
+            }
+            case 3:{
+                changeImage("RedWall_03.png");
+                break;
+            }
+            case 4:{
+                changeImage("RedWall_02.png");
+                break;
+            }
+        }
+        if(health <= 0){
+            eng.remove(shared_from_this());
+        }
+    }
+    void onCollisionWith(SpritePtr other) override {
+        if(dynamic_pointer_cast<Bullet>(other)){
+            collided = true;
+        }
+    }
 private:
+    bool collided = false;
+    int health = 5;
 };
 
 //probably move to cpp and h files
@@ -266,7 +300,7 @@ public:
                 
                 attackTimer = 0;
             }
-        }    
+        } // onKeyDown   
 	}
     void onKeyUp() {
         const bool *key_states = SDL_GetKeyboardState(0);
