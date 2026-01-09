@@ -11,22 +11,10 @@ using namespace std;
 class Player;
 class Bullet;
 
-class Goal : public Sprite{
-public:
-    Goal():Sprite("goal.png",10,0){}
-    void tick() override {
-        if (static_cast<double>(rand()) / RAND_MAX < 0.01 || getRect().x > cnts::gScreenWidth - getRect().w || getRect().x < 0)
-            direction = -direction;
-        move(5*direction,0);
-    }
-private:
-    int direction = 1;
-};
-
 //probably move to cpp and h files
 class Wall : public Sprite {
 public:
-    Wall() : Sprite("RedWall.png", 300, 200){}
+    Wall() : Sprite(cnts::red_wall_1, 300, 200){}
     void tick() override {
         if(collided){
             health--;
@@ -34,19 +22,19 @@ public:
         }
         switch(health){
             case 1:{
-                changeImage("RedWall_05.png");
+                changeImage(cnts::red_wall_2);
                 break;
             }
             case 2:{
-                changeImage("RedWall_04.png");
+                changeImage(cnts::red_wall_3);
                 break;
             }
             case 3:{
-                changeImage("RedWall_03.png");
+                changeImage(cnts::red_wall_4);
                 break;
             }
             case 4:{
-                changeImage("RedWall_02.png");
+                changeImage(cnts::red_wall_5);
                 break;
             }
         }
@@ -67,7 +55,7 @@ private:
 //probably move to cpp and h files
 class Enemy : public Sprite {
 public:
-    Enemy(int x, int y) : Sprite("GreenEnemy.png", x, y){}
+    Enemy(int x, int y) : Sprite(cnts::green_enemy, x, y){}
     void tick() override {
         move(xSpeed, ySpeed);
         xCollision = false;
@@ -137,7 +125,7 @@ class PointCounter : public Label {
 
 class Bullet : public Sprite {
 public:
-    Bullet(int x, int y, int xs, int ys, shared_ptr<PointCounter> pc):Sprite("bullet.png", x,y), xSpeed(xs), ySpeed(ys), pointCounter(pc){}
+    Bullet(int x, int y, int xs, int ys, shared_ptr<PointCounter> pc):Sprite(cnts::bullet, x,y), xSpeed(xs), ySpeed(ys), pointCounter(pc){}
 
     void tick() override {
         move(xSpeed, ySpeed);
@@ -205,7 +193,7 @@ private:
 //probably move to cpp and h files
 class Player : public Sprite {
 public:
-    Player(int x, LabelPtr label):Sprite("football.png", x,400), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
+    Player(int x, LabelPtr label):Sprite(cnts::player, x,400), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
     void tick() override {
         move(xSpeed, ySpeed);
 
@@ -332,12 +320,10 @@ public:
 int main(){
     LabelPtr label = LabelPtr(new PointCounter(10,10));
     SpritePtr player = SpritePtr(new Player(300, label));
-    //SpritePtr goal = SpritePtr(new Goal);
 
     eng.add(label);
     eng.add(player);
     eng.add(SpritePtr(new Wall()));
     eng.add(SpritePtr(new EnemySpawner()));
-    //eng.add(goal);
     eng.run();
 }

@@ -5,15 +5,32 @@
 namespace demo{
 
     Engine::Engine(){
+        //check för minnesläckage
         win = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
+        if(!win){SDL_Log("Window creation failed!");}
         ren = SDL_CreateRenderer(win, NULL);
-        TTF_Init();
+        if(!ren){
+            SDL_DestroyWindow(win);
+            SDL_Log("Rendered creation failed!");
+        }
+        if(!TTF_Init()){
+            SDL_DestroyRenderer(ren);
+            SDL_DestroyWindow(win);
+            SDL_Log("TTF initialization failed!");
+        }
         font = TTF_OpenFont((cnts::gResPath + "fonts/INKFREE.TTF").c_str(), 24);
-        if(!font){SDL_Log("Font failed");}
-        srand(time(NULL));
+        if(!font){
+            TTF_Quit();
+            SDL_DestroyRenderer(ren);
+            SDL_DestroyWindow(win);
+            SDL_Log("Font failed");
+        }
+        //srand(time(NULL));
     }
 
     Engine::~Engine(){
+        sprites.clear();
+        TTF_CloseFont(font);
         TTF_Quit();
         SDL_DestroyRenderer(ren);
         SDL_DestroyWindow(win);
