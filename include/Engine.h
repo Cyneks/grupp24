@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "Constants.h"
+#include "Sound.h"
 namespace cnts = constants;
 namespace demo{
     class Sprite;
@@ -16,6 +17,7 @@ namespace demo{
             SDL_Renderer* getRen() const { return ren; }
             SDL_Window* getWin() const { return win; }
             TTF_Font* getFont() const { return font; }
+            void playSFX(const std::string& name);
             void add(SpritePtr spr);
             void remove(SpritePtr spr);
             void run();
@@ -23,6 +25,7 @@ namespace demo{
             SDL_Window* win;
             SDL_Renderer* ren;
             TTF_Font* font;
+            Sound sound;
             std::vector<SpritePtr> sprites, added, removed;
 
     };

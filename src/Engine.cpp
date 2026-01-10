@@ -6,6 +6,8 @@ namespace demo{
 
     Engine::Engine(){
         //check för minnesläckage
+        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+
         win = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
         if(!win){SDL_Log("Window creation failed!");}
         ren = SDL_CreateRenderer(win, NULL);
@@ -25,7 +27,6 @@ namespace demo{
             SDL_DestroyWindow(win);
             SDL_Log("Font failed");
         }
-        //srand(time(NULL));
     }
 
     Engine::~Engine(){
@@ -42,6 +43,10 @@ namespace demo{
 
     void Engine::remove(SpritePtr spr){
         removed.push_back(spr);
+    }
+
+    void Engine::playSFX(const std::string& name) {
+        sound.play(name);
     }
 
     void Engine::run(){

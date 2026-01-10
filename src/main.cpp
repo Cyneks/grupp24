@@ -2,6 +2,7 @@
 #include <memory>
 #include "Sprite.h"
 #include "Label.h"
+#include "Sound.h"
 #include <cstdlib>
 #include <random>
 #include <iostream>
@@ -17,28 +18,33 @@ public:
     Wall() : Sprite(cnts::red_wall_1, 300, 200){}
     void tick() override {
         if(collided){
+            if (health > 0) {
+                eng.playSFX(cnts::wall_hit);
+            }
+
             health--;
             collided = false;
         }
         switch(health){
             case 1:{
-                changeImage(cnts::red_wall_2);
+                changeImage(cnts::red_wall_5);
                 break;
             }
             case 2:{
-                changeImage(cnts::red_wall_3);
-                break;
-            }
-            case 3:{
                 changeImage(cnts::red_wall_4);
                 break;
             }
+            case 3:{
+                changeImage(cnts::red_wall_3);
+                break;
+            }
             case 4:{
-                changeImage(cnts::red_wall_5);
+                changeImage(cnts::red_wall_2);
                 break;
             }
         }
         if(health <= 0){
+            eng.playSFX(cnts::wall_break);
             eng.remove(shared_from_this());
         }
     }
@@ -138,6 +144,7 @@ public:
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
             if(!hit){
+                eng.playSFX(cnts::monster_death);
                 hit = true;
                 pointCounter->addPoints();
                 eng.remove(other);
@@ -208,6 +215,7 @@ public:
 
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
+            eng.playSFX(cnts::player_death);
             eng.remove(shared_from_this());
         }
         
@@ -264,25 +272,29 @@ public:
         /*
         Attacks
         Move to its own class so that movement/attack inputs don't disturb eachother?
-        Not very noticeably on high (slow) attacktimers
+        Not very noticeable on high (slow) attacktimers
         */
         if (attackTimer == 35) {
             if(key_states[SDL_SCANCODE_UP]){
+                eng.playSFX(cnts::gunshot);
                 SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -10,pointCounter));
                 eng.add(spr);
 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_RIGHT]){
+                eng.playSFX(cnts::gunshot);
                 SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 10, 0,pointCounter));
                 eng.add(spr);
                 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_DOWN]){
+                eng.playSFX(cnts::gunshot);
                 SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 10,pointCounter));
                 eng.add(spr);
                 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_LEFT]){
+                eng.playSFX(cnts::gunshot);
                 SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -10, 0,pointCounter));
                 eng.add(spr);
                 
