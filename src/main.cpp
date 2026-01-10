@@ -306,17 +306,6 @@ private:
     shared_ptr<PointCounter> pointCounter;
 };
 
-/*
-class Kicker : public Sprite{
-public:
-    void tick() override {}
-    void onMouseDown(const SDL_Event& event) override{
-        SpritePtr spr = SpritePtr(new Boll(event.button.x));
-        eng.add(spr);
-    }
-};
-*/
-
 int main(){
     LabelPtr label = LabelPtr(new PointCounter(10,10));
     SpritePtr player = SpritePtr(new Player(300, label));
