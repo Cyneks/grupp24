@@ -118,15 +118,43 @@ private:
     bool xCollision, yCollision;
 };
 
+class WinText : public Label {
+    public:
+        WinText(int x, int y) : Label (x, y, "You win!"){};
+
+        void tick() override {};
+};
+
+class LoseText : public Label {
+    public:
+        LoseText(int x, int y) : Label (x, y, "You lose!"){};
+
+        void tick() override {};
+};
+
 class PointCounter : public Label {
     public:
         PointCounter(int x, int y) : Label(x,y,"Points: 0"){}
-        void tick() override {}
+        void tick() override {
+            if (points >= 10 && !cleared) {
+                eng.playSFX(cnts::win);
+
+                //Orka hitta mitten av skärmen lol
+                eng.add(LabelPtr(new WinText(500, 400)));
+                cleared = true;
+            }
+        }
+
         void addPoints(){
             setText("Points: " + std::to_string(++points));
         }
+
+        const bool getClearState() {
+            return cleared;
+        }
     private:
         int points = 0;
+        bool cleared = false;
 };
 
 class Bullet : public Sprite {
@@ -208,6 +236,10 @@ public:
             attackTimer++;
         }
 
+        if (pointCounter->getClearState()) {
+            eng.remove(shared_from_this());
+        }
+
         /*if (getRect().y < 0){
            eng.remove(shared_from_this());
         }*/
@@ -216,6 +248,7 @@ public:
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
             eng.playSFX(cnts::player_death);
+            eng.add(LabelPtr(new LoseText(500, 400)));
             eng.remove(shared_from_this());
         }
         
