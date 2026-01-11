@@ -19,6 +19,7 @@ namespace constants
 	const std::string green_enemy {gResPath + "images/GreenEnemy.png"};
 	const std::string bullet {gResPath + "images/bullet.png"};
 	const std::string player {gResPath + "images/football.png"};
+	const std::string start_game {gResPath + "sounds/start_game.wav"};
 	const std::string gunshot {gResPath + "sounds/gunshot.wav"};
 	const std::string monster_death {gResPath + "sounds/monster_death.wav"};
 	const std::string player_death {gResPath + "sounds/player_death.wav"};
