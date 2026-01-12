@@ -45,6 +45,10 @@ namespace demo{
         removed.push_back(spr);
     }
 
+    void Engine::clearSprites() {
+        sprites.clear();
+    }
+
     void Engine::playSFX(const std::string& name) {
         sound.play(name);
     }
@@ -64,6 +68,11 @@ namespace demo{
                     case SDL_EVENT_MOUSE_BUTTON_DOWN:
                         for(SpritePtr spr : sprites)
                             spr->onMouseDown(event);
+                        break;
+                    case SDL_EVENT_MOUSE_BUTTON_UP:
+                        for (SpritePtr spr : sprites) {
+                            spr->onMouseUp(event);
+                        }
                         break;
                     case SDL_EVENT_KEY_UP: {
                         for (SpritePtr spr : sprites) {

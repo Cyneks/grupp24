@@ -20,6 +20,7 @@ namespace demo{
             void playSFX(const std::string& name);
             void add(SpritePtr spr);
             void remove(SpritePtr spr);
+            void clearSprites();
             void run();
         private:
             SDL_Window* win;

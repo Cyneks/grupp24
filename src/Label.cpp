@@ -2,8 +2,8 @@
 #include "Label.h"
 
 namespace demo{
-
-    Label::Label(int x, int y, std::string newText) : rect(x,y,0,0), text(newText), image(nullptr){
+    Label::Label(int x, int y, int w, int h, std::string newText) : text(newText), image(nullptr){
+        setRect(x, y, w, h);
         setText(text);
     }
 

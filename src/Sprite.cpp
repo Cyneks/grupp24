@@ -36,6 +36,13 @@ namespace demo{
         rect.y += dy; 
     }
 
+    void Sprite::setRect(int x, int y, int w, int h) {
+        rect.x = x;
+        rect.y = y;
+        rect.w = w;
+        rect.h = h;
+    }
+
     bool Sprite::collidedWith(SpritePtr other) const{
         return SDL_HasRectIntersectionFloat(&rect, &other->rect);
     }

@@ -2,6 +2,7 @@
 #include <memory>
 #include "Sprite.h"
 #include "Label.h"
+#include "Button.h"
 #include "Sound.h"
 #include <cstdlib>
 #include <random>
@@ -120,27 +121,27 @@ private:
 
 class WinText : public Label {
     public:
-        WinText(int x, int y) : Label (x, y, "You win!"){};
+        WinText(int x, int y, int w, int h) : Label (x, y, w, h, "You win!"){};
 
         void tick() override {};
 };
 
 class LoseText : public Label {
     public:
-        LoseText(int x, int y) : Label (x, y, "You lose!"){};
+        LoseText(int x, int y, int w, int h) : Label (x, y, w, h, "You lose!"){};
 
         void tick() override {};
 };
 
 class PointCounter : public Label {
     public:
-        PointCounter(int x, int y) : Label(x,y,"Points: 0"){}
+        PointCounter(int x, int y, int w, int h) : Label(x,y,w,h,"Points: 0"){}
         void tick() override {
             if (points >= 10 && !cleared) {
                 eng.playSFX(cnts::win);
 
                 //Orka hitta mitten av skärmen lol
-                eng.add(LabelPtr(new WinText(500, 400)));
+                eng.add(LabelPtr(new WinText(500, 400, 0, 0)));
                 cleared = true;
             }
         }
@@ -248,7 +249,7 @@ public:
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
             eng.playSFX(cnts::player_death);
-            eng.add(LabelPtr(new LoseText(500, 400)));
+            eng.add(LabelPtr(new LoseText(500, 400, 0, 0)));
             eng.remove(shared_from_this());
         }
         
@@ -351,13 +352,47 @@ private:
     shared_ptr<PointCounter> pointCounter;
 };
 
-int main(){
-    LabelPtr label = LabelPtr(new PointCounter(10,10));
-    SpritePtr player = SpritePtr(new Player(300, label));
+class StartButton : public Button {
+    public:
+        StartButton(float x, float y, float w, float h, std::string txt): Button(x, y, w, h, txt) {}
 
-    eng.add(label);
-    eng.add(player);
-    eng.add(SpritePtr(new Wall()));
-    eng.add(SpritePtr(new EnemySpawner()));
+        void tick() override {}
+
+        void onMouseDown(const SDL_Event& event){
+            SDL_FPoint point = {event.button.x, event.button.y};
+            if (SDL_PointInRectFloat(&point, &getRect())){
+                setDown(true);
+            }
+        }
+
+        void onMouseUp(const SDL_Event& event) override {
+            SDL_FPoint point = {event.button.x, event.button.y};
+            if (getDownState() && SDL_PointInRectFloat(&point, &getRect())) {
+                LabelPtr label = LabelPtr(new PointCounter(10,10,0,0));
+                SpritePtr player = SpritePtr(new Player(300, label));
+
+                eng.add(label);
+                eng.add(player);
+                eng.add(SpritePtr(new Wall()));
+                eng.add(SpritePtr(new EnemySpawner()));
+
+                eng.remove(shared_from_this());
+
+                const SDL_FRect& r = getRect();
+                std::cout << "Rect: "
+                << r.x << ", "
+                << r.y << ", "
+                << r.w << ", "
+                << r.h << "\n";
+            }
+
+            setDown(false);
+        }
+};
+
+int main(){
+    ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 200, 100, "Start"));
+
+    eng.add(startButton);
     eng.run();
 }
