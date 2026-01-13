@@ -352,9 +352,32 @@ private:
     shared_ptr<PointCounter> pointCounter;
 };
 
+class ExitButton : public Button {
+    public:
+        ExitButton(int x, int y, int w, int h, std::string txt): Button(x, y, w, h, txt) {}
+
+        void tick() override {}
+
+        void onMouseDown(const SDL_Event& event){
+            SDL_FPoint point = {event.button.x, event.button.y};
+            if (SDL_PointInRectFloat(&point, &getRect())){
+                setDown(true);
+            }
+        }
+
+        void onMouseUp(const SDL_Event& event) override {
+            SDL_FPoint point = {event.button.x, event.button.y};
+            if (getDownState() && SDL_PointInRectFloat(&point, &getRect())) {
+                eng.stop();
+            }
+
+            setDown(false);
+        }
+};
+
 class StartButton : public Button {
     public:
-        StartButton(float x, float y, float w, float h, std::string txt): Button(x, y, w, h, txt) {}
+        StartButton(int x, int y, int w, int h, std::string txt, ButtonPtr exit): Button(x, y, w, h, txt), exitButton(exit) {}
 
         void tick() override {}
 
@@ -376,16 +399,21 @@ class StartButton : public Button {
                 eng.add(SpritePtr(new Wall()));
                 eng.add(SpritePtr(new EnemySpawner()));
 
+                eng.remove(exitButton);
                 eng.remove(shared_from_this());
             }
 
             setDown(false);
         }
+    private:
+        ButtonPtr exitButton;
 };
 
 int main(){
-    ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 200, 100, "Start"));
+    ButtonPtr exitButton = ButtonPtr(new ExitButton(200, 100, 10, 10, "Exit"));
+    ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 10, 10, "Start", exitButton));
 
+    eng.add(exitButton);
     eng.add(startButton);
     eng.run();
 }

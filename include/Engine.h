@@ -22,12 +22,14 @@ namespace demo{
             void remove(SpritePtr spr);
             void clearSprites();
             void run();
+            void stop();
         private:
             SDL_Window* win;
             SDL_Renderer* ren;
             TTF_Font* font;
             Sound sound;
             std::vector<SpritePtr> sprites, added, removed;
+            bool running = true;
 
     };
     extern Engine eng;

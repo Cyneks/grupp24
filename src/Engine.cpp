@@ -53,11 +53,14 @@ namespace demo{
         sound.play(name);
     }
 
+    void Engine::stop() {
+        running = false;
+    }
+
     void Engine::run(){
         const int FPS = 60; // Frames Per Second
         const int TICKINTERVAL = 1000 / FPS; // In miliseconds
 
-        bool running = true;
         while (running){
             Uint64 nextTick = SDL_GetTicks() + TICKINTERVAL; 
             SDL_Event event;
