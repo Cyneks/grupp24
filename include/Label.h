@@ -13,9 +13,7 @@ namespace demo{
             std::string getText() const;
         protected:
             Label(int x, int y, int w, int h, std::string text);
-            SDL_FRect& getMutableRect() { return rect; }
         private:
-            SDL_FRect rect;
             std::string text;
             SDL_Texture* image;
 

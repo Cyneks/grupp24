@@ -377,13 +377,6 @@ class StartButton : public Button {
                 eng.add(SpritePtr(new EnemySpawner()));
 
                 eng.remove(shared_from_this());
-
-                const SDL_FRect& r = getRect();
-                std::cout << "Rect: "
-                << r.x << ", "
-                << r.y << ", "
-                << r.w << ", "
-                << r.h << "\n";
             }
 
             setDown(false);

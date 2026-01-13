@@ -14,7 +14,7 @@ namespace demo{
     }
 
     void Label::draw() const {
-        SDL_RenderTexture(eng.getRen(), image, NULL, &rect);
+        SDL_RenderTexture(eng.getRen(), image, NULL, &getRect());
     }
     
     void Label::setText(std::string newText){
@@ -28,8 +28,8 @@ namespace demo{
             return;
         }
         image = SDL_CreateTextureFromSurface(eng.getRen(), surface);
-        rect.w = surface->w;
-        rect.h = surface->h;
+        getMutableRect().w = surface->w;
+        getMutableRect().h = surface->h;
         SDL_DestroySurface(surface);
     }
 
