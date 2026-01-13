@@ -409,10 +409,19 @@ class StartButton : public Button {
         ButtonPtr exitButton;
 };
 
+class Background : public Sprite {
+    public:
+        Background(int x, int y) : Sprite(cnts::grass, x, y) {}
+
+        void tick() override {}
+};
+
 int main(){
+    SpritePtr background = SpritePtr(new Background(0, 0));
     ButtonPtr exitButton = ButtonPtr(new ExitButton(200, 100, 10, 10, "Exit"));
     ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 10, 10, "Start", exitButton));
 
+    eng.add(background);
     eng.add(exitButton);
     eng.add(startButton);
     eng.run();
