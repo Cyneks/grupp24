@@ -141,7 +141,7 @@ namespace demo{
                 }
             }
 
-           SDL_SetRenderDrawColor(ren,255,255,255,255);
+            SDL_SetRenderDrawColor(ren,255,255,255,255);
             SDL_RenderClear(ren);
             for(SpritePtr spr : sprites)
                 spr->draw();

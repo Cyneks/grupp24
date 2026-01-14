@@ -121,14 +121,14 @@ private:
 
 class WinText : public Label {
     public:
-        WinText(int x, int y, int w, int h) : Label (x, y, w, h, "You win!"){};
+        WinText(int x, int y, int w, int h) : Label (x, y, w, h, "You win! Press R to play again!"){};
 
         void tick() override {};
 };
 
 class LoseText : public Label {
     public:
-        LoseText(int x, int y, int w, int h) : Label (x, y, w, h, "You lose!"){};
+        LoseText(int x, int y, int w, int h) : Label (x, y, w, h, "You lose! Press R to play again!"){};
 
         void tick() override {};
 };
@@ -141,7 +141,7 @@ class PointCounter : public Label {
                 eng.playSFX(cnts::win);
 
                 //Orka hitta mitten av skärmen lol
-                eng.add(LabelPtr(new WinText(500, 400, 0, 0)));
+                eng.add(LabelPtr(new WinText(400, 350, 0, 0)));
                 cleared = true;
             }
         }
@@ -240,16 +240,12 @@ public:
         if (pointCounter->getClearState()) {
             eng.remove(shared_from_this());
         }
-
-        /*if (getRect().y < 0){
-           eng.remove(shared_from_this());
-        }*/
     }
 
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
             eng.playSFX(cnts::player_death);
-            eng.add(LabelPtr(new LoseText(500, 400, 0, 0)));
+            eng.add(LabelPtr(new LoseText(400, 350, 0, 0)));
             eng.remove(shared_from_this());
         }
         
@@ -303,11 +299,6 @@ public:
             ySpeed = -5;
         }
 
-        /*
-        Attacks
-        Move to its own class so that movement/attack inputs don't disturb eachother?
-        Not very noticeable on high (slow) attacktimers
-        */
         if (attackTimer == 35) {
             if(key_states[SDL_SCANCODE_UP]){
                 eng.playSFX(cnts::gunshot);
