@@ -43,7 +43,12 @@ namespace demo {
         activeSounds.erase(
             std::remove_if(activeSounds.begin(), activeSounds.end(),
                 [](const std::unique_ptr<SoundInstance>& s) {
-                    return SDL_GetAudioStreamAvailable(s->stream) == 0;
+                    if (SDL_GetAudioStreamAvailable(s->stream) == 0) {
+                        SDL_DestroyAudioStream(s->stream);
+                        SDL_free(s->buffer);
+                        return true;
+                    }
+                    return false;
                 }),
             activeSounds.end()
         );

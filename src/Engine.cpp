@@ -4,36 +4,47 @@
 #include <iostream>
 namespace demo{
 
-    Engine::Engine(){
-        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    Engine::Engine() : win(nullptr), ren(nullptr), font(nullptr), running(true){
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+            throw std::runtime_error("SDL_Init failed");
+        }
 
-        win = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
-        if(!win){SDL_Log("Window creation failed!");}
-        ren = SDL_CreateRenderer(win, NULL);
-        if(!ren){
-            SDL_DestroyWindow(win);
-            SDL_Log("Rendered creation failed!");
-        }
-        if(!TTF_Init()){
-            SDL_DestroyRenderer(ren);
-            SDL_DestroyWindow(win);
-            SDL_Log("TTF initialization failed!");
-        }
-        font = TTF_OpenFont((cnts::gResPath + "fonts/INKFREE.TTF").c_str(), 24);
-        if(!font){
+        try {
+            win = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
+            if(!win) {
+                throw std::runtime_error("Window creation failed");
+            }
+
+            ren = SDL_CreateRenderer(win, NULL);
+            if(!ren){
+                throw std::runtime_error("Renderer creation failed");
+            }
+
+            if(!TTF_Init()){
+                throw std::runtime_error("TTF_Init failed");
+            }
+
+            font = TTF_OpenFont((cnts::gResPath + "fonts/INKFREE.TTF").c_str(), 24);
+            if(!font){
+                throw std::runtime_error("Font load failed");
+            }
+        } catch (std::runtime_error) {
+            if (font) TTF_CloseFont(font);
             TTF_Quit();
-            SDL_DestroyRenderer(ren);
-            SDL_DestroyWindow(win);
-            SDL_Log("Font failed");
+            if (ren) SDL_DestroyRenderer(ren);
+            if (win) SDL_DestroyWindow(win);
+            SDL_Quit();
+            throw;
         }
     }
 
     Engine::~Engine(){
         sprites.clear();
-        TTF_CloseFont(font);
+        if (font) TTF_CloseFont(font);
         TTF_Quit();
-        SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
+        if (ren) SDL_DestroyRenderer(ren);
+        if (win) SDL_DestroyWindow(win);
+        SDL_Quit();
     }
 
     void Engine::add(SpritePtr spr){

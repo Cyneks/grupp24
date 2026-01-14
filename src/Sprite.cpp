@@ -16,11 +16,17 @@ namespace demo{
     }
 
     void Sprite::changeImage(std::string pic) {
+        if (image) {
+            SDL_DestroyTexture(image);
+            image = nullptr;
+        }
+        
         image = IMG_LoadTexture(eng.getRen(), (pic).c_str());
         if(!image){
             cerr << "No such file: " << pic << endl;
             exit(EXIT_FAILURE);
         }
+        
         rect = {getRect().x, getRect().y, static_cast<float>(image->w), static_cast<float>(image->h)};
     }
 
