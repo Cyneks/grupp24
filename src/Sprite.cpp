@@ -3,6 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <iostream>
 using namespace std;
+
 namespace demo{
     Sprite::Sprite(string name,float x,float y){
         //only allow for png pictures? Can add ".png" then.
@@ -46,5 +47,4 @@ namespace demo{
     bool Sprite::collidedWith(SpritePtr other) const{
         return SDL_HasRectIntersectionFloat(&rect, &other->rect);
     }
-
- }
+}

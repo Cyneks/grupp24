@@ -427,8 +427,8 @@ class Game{
 public:
     void start(){
         SpritePtr background = SpritePtr(new Background(0, 0));
-        ButtonPtr exitButton = ButtonPtr(new ExitButton(200, 100, 10, 10, "Exit"));
-        ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 10, 10, "Start", exitButton));
+        ButtonPtr exitButton = ButtonPtr(new ExitButton(490, 350, 10, 10, "Exit"));
+        ButtonPtr startButton = ButtonPtr(new StartButton(480, 250, 10, 10, "Start", exitButton));
 
         eng.add(background);
         eng.add(exitButton);
