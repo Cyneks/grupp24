@@ -404,6 +404,7 @@ class StartButton : public Button {
                     }
                 }
                 eng.add(SpritePtr(new EnemySpawner()));
+                eng.playSFX(cnts::start_game);
                 eng.remove(exitButton);
                 eng.remove(shared_from_this());
             }
