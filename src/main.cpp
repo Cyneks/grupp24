@@ -16,7 +16,7 @@ class Bullet;
 //probably move to cpp and h files
 class Wall : public Sprite {
 public:
-    Wall() : Sprite(cnts::red_wall_1, 300, 200){}
+    Wall(int x, int y) : Sprite(cnts::red_wall_1, x, y){}
     void tick() override {
         if(collided){
             if (health > 0) {
@@ -199,8 +199,8 @@ mt19937 gen(rd());
 uniform_int_distribution<int> side(0,1);
 uniform_int_distribution<int> smallX(0, 1);
 uniform_int_distribution<int> smallY(0, 1);
-uniform_int_distribution<int> largeX(0, cnts::gScreenWidth);
-uniform_int_distribution<int> largeY(0, cnts::gScreenHeight);
+//uniform_int_distribution<int> largeX(0, cnts::gScreenWidth);
+//uniform_int_distribution<int> largeY(0, cnts::gScreenHeight);
 
 class EnemySpawner : public Sprite {
 public:
@@ -208,13 +208,13 @@ public:
         spawnRate++;
         if(spawnRate >= 60){
             if(side(gen)){
-                int x = largeX(gen);
+                int x = cnts::gScreenWidth/2;
                 int y = smallY(gen);
                 eng.add(SpritePtr(new Enemy(x,yPos[y])));
                 spawnRate = 0;
             } else {
                 int x = smallX(gen);
-                int y = largeY(gen);
+                int y = cnts::gScreenHeight/2 - 69;
                 eng.add(SpritePtr(new Enemy(xPos[x],y)));
                 spawnRate = 0;
             }
@@ -222,14 +222,14 @@ public:
     }
 private:
     int spawnRate = 30;
-    int xPos[2] = {0, cnts::gScreenWidth};
-    int yPos[2] = {0, cnts::gScreenHeight};
+    int xPos[2] = {0, cnts::gScreenWidth - 69};
+    int yPos[2] = {0, cnts::gScreenHeight - 69};
 };
 
 //probably move to cpp and h files
 class Player : public Sprite {
 public:
-    Player(int x, LabelPtr label):Sprite(cnts::player, x,400), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
+    Player(int x, int y, LabelPtr label):Sprite(cnts::player, x, y), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
     void tick() override {
         move(xSpeed, ySpeed);
 
@@ -391,14 +391,28 @@ class StartButton : public Button {
         void onMouseUp(const SDL_Event& event) override {
             SDL_FPoint point = {event.button.x, event.button.y};
             if (getDownState() && SDL_PointInRectFloat(&point, &getRect())) {
-                LabelPtr label = LabelPtr(new PointCounter(10,10,0,0));
-                SpritePtr player = SpritePtr(new Player(300, label));
+                LabelPtr label = LabelPtr(new PointCounter(100,100,0,0));
+                SpritePtr player = SpritePtr(new Player(cnts::gScreenWidth/2, cnts::gScreenHeight/2, label));
 
                 eng.add(label);
                 eng.add(player);
-                eng.add(SpritePtr(new Wall()));
+                eng.add(SpritePtr(new Wall(300,200)));
+                eng.add(SpritePtr(new Wall(300,450)));
+                eng.add(SpritePtr(new Wall(700,200)));
+                eng.add(SpritePtr(new Wall(700,450)));
+                for(int i = 0; i < 16; i++){
+                    if(i != 7 && i != 8){
+                        eng.add(SpritePtr(new Wall(i*69, 0)));
+                        eng.add(SpritePtr(new Wall(i*69, cnts::gScreenHeight - 69)));
+                    }
+                }
+                for(int i = 1; i < 10; i++){
+                    if(i != 4 && i != 5){
+                        eng.add(SpritePtr(new Wall(0, i*69)));
+                        eng.add(SpritePtr(new Wall(cnts::gScreenWidth - 69, i*69)));
+                    }
+                }
                 eng.add(SpritePtr(new EnemySpawner()));
-
                 eng.remove(exitButton);
                 eng.remove(shared_from_this());
             }
