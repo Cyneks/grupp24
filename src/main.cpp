@@ -430,13 +430,25 @@ class Background : public Sprite {
         void tick() override {}
 };
 
-int main(){
-    SpritePtr background = SpritePtr(new Background(0, 0));
-    ButtonPtr exitButton = ButtonPtr(new ExitButton(200, 100, 10, 10, "Exit"));
-    ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 10, 10, "Start", exitButton));
+//game function where gameprogrammers write all of their starting code for the game
+//although class itself is more leaned into engine and the structure should not be changed
+class Game{
+public:
+    void start(){
+        SpritePtr background = SpritePtr(new Background(0, 0));
+        ButtonPtr exitButton = ButtonPtr(new ExitButton(200, 100, 10, 10, "Exit"));
+        ButtonPtr startButton = ButtonPtr(new StartButton(100, 100, 10, 10, "Start", exitButton));
 
-    eng.add(background);
-    eng.add(exitButton);
-    eng.add(startButton);
+        eng.add(background);
+        eng.add(exitButton);
+        eng.add(startButton);
+    }
+};
+
+//this is more closely attahced to the game engine and not the gameprogrammer
+//aka main function is a engine class and should not be touched by the gameprogrammer
+int main(){
+    Game g;    
+    eng.setStartCallBack([&]() {g.start();});
     eng.run();
 }

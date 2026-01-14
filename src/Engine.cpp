@@ -56,9 +56,17 @@ namespace demo{
         running = false;
     }
 
+    void Engine::setStartCallBack(std::function<void()> callBack){
+        startCallBack = std::move(callBack);
+    }
+
     void Engine::run(){
         const int FPS = 60; // Frames Per Second
         const int TICKINTERVAL = 1000 / FPS; // In miliseconds
+
+        if(startCallBack){
+            startCallBack();
+        }
 
         while (running){
             Uint64 nextTick = SDL_GetTicks() + TICKINTERVAL; 
@@ -85,6 +93,9 @@ namespace demo{
                         }
                         if(event.key.key == SDLK_R && victory){
                             clearSprites();
+                            if(startCallBack){
+                                startCallBack();
+                            }
                         }
                     }
                     case SDL_EVENT_KEY_DOWN:

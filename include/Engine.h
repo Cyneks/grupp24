@@ -5,6 +5,7 @@
 #include <memory>
 #include "Constants.h"
 #include "Sound.h"
+#include <functional>
 namespace cnts = constants;
 namespace demo{
     class Sprite;
@@ -23,6 +24,7 @@ namespace demo{
             void clearSprites();
             void run();
             void stop();
+            void setStartCallBack(std::function<void()>);
         private:
             SDL_Window* win;
             SDL_Renderer* ren;
@@ -31,7 +33,7 @@ namespace demo{
             std::vector<SpritePtr> sprites, added, removed;
             bool victory = false;
             bool running = true;
-
+            std::function<void()> startCallBack;
     };
     extern Engine eng;
 }
