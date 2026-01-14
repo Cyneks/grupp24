@@ -11,15 +11,13 @@ namespace demo{
             virtual ~Sprite();
             virtual void draw() const;
             const SDL_FRect& getRect() const { return rect; }
-            // move to a moveable sprite class?
             virtual void tick() = 0;
             virtual void changeImage(std::string);
 
-            //move to a moveable sprite class?
             void move(int dx, int dy);
             bool collidedWith(SpritePtr other) const;
+            virtual const bool getClearState() { return false; };
 
-            //move to a moveable sprite class?
             virtual void interactWith(SpritePtr other) {}
             virtual void onCollisionWith(SpritePtr other) {}
             virtual void onKeyDown(const SDL_Event& event) {}

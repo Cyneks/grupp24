@@ -5,7 +5,6 @@
 namespace demo{
 
     Engine::Engine(){
-        //check för minnesläckage
         SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
         win = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
@@ -80,6 +79,12 @@ namespace demo{
                     case SDL_EVENT_KEY_UP: {
                         for (SpritePtr spr : sprites) {
                             spr->onKeyUp();
+                            if(spr->getClearState()){
+                                victory = spr->getClearState();
+                            }
+                        }
+                        if(event.key.key == SDLK_R && victory){
+                            clearSprites();
                         }
                     }
                     case SDL_EVENT_KEY_DOWN:

@@ -150,7 +150,7 @@ class PointCounter : public Label {
             setText("Points: " + std::to_string(++points));
         }
 
-        const bool getClearState() {
+        const bool getClearState() override {
             return cleared;
         }
     private:

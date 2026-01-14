@@ -29,6 +29,7 @@ namespace demo{
             TTF_Font* font;
             Sound sound;
             std::vector<SpritePtr> sprites, added, removed;
+            bool victory = false;
             bool running = true;
 
     };
