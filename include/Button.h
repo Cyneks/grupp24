@@ -7,11 +7,12 @@ namespace demo{
 
     class Button : public Label {
         public:
-            Button(int x,int y,int w,int h,std::string txt);
             ~Button();
             bool getDownState() const { return down; }
             void setDown(bool state);
             void draw() const;
+        protected:
+            Button(int x,int y,int w,int h,std::string txt);
         private:
             bool down = false;
     };
