@@ -16,7 +16,7 @@ class Bullet;
 //probably move to cpp and h files
 class Wall : public Sprite {
 public:
-    Wall(int x, int y) : Sprite(cnts::red_wall_1, x, y){}
+    Wall(int x, int y) : Sprite(cnts::wall_1, x, y){}
     void tick() override {
         if(collided){
             if (health > 0) {
@@ -28,19 +28,19 @@ public:
         }
         switch(health){
             case 1:{
-                changeImage(cnts::red_wall_5);
+                changeImage(cnts::wall_5);
                 break;
             }
             case 2:{
-                changeImage(cnts::red_wall_4);
+                changeImage(cnts::wall_4);
                 break;
             }
             case 3:{
-                changeImage(cnts::red_wall_3);
+                changeImage(cnts::wall_3);
                 break;
             }
             case 4:{
-                changeImage(cnts::red_wall_2);
+                changeImage(cnts::wall_2);
                 break;
             }
         }
