@@ -28,7 +28,7 @@ namespace demo{
             if(!font){
                 throw std::runtime_error("Font load failed");
             }
-        } catch (std::runtime_error) {
+        } catch (const std::runtime_error&) {
             if (font) TTF_CloseFont(font);
             TTF_Quit();
             if (ren) SDL_DestroyRenderer(ren);
