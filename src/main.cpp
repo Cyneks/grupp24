@@ -131,6 +131,10 @@ class LoseText : public Label {
         LoseText(int x, int y, int w, int h) : Label (x, y, w, h, "You lose! Press R to play again!"){};
 
         void tick() override {};
+
+        const bool getClearState() override {
+            return true;
+        }
 };
 
 class PointCounter : public Label {

@@ -31,7 +31,7 @@ namespace demo{
             TTF_Font* font;
             Sound sound;
             std::vector<SpritePtr> sprites, added, removed;
-            bool victory = false;
+            bool gameOver = false;
             bool running = true;
             std::function<void()> startCallBack;
     };

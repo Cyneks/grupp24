@@ -5,7 +5,7 @@
 namespace demo{
 
     Engine::Engine() : win(nullptr), ren(nullptr), font(nullptr), running(true){
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0) {
             throw std::runtime_error("SDL_Init failed");
         }
 
@@ -99,10 +99,10 @@ namespace demo{
                         for (SpritePtr spr : sprites) {
                             spr->onKeyUp();
                             if(spr->getClearState()){
-                                victory = spr->getClearState();
+                                gameOver = spr->getClearState();
                             }
                         }
-                        if(event.key.key == SDLK_R && victory){
+                        if(event.key.key == SDLK_R && gameOver){
                             clearSprites();
                             if(startCallBack){
                                 startCallBack();
