@@ -12,11 +12,11 @@ namespace constants
    	const std::string gResPath { "./resources/" };
 	// PATH'S TO ALL YOUR EXTERNAL RESOURCES using 'gResPath'
 	const std::string grass {gResPath + "images/grass_bg.png"};
-	const std::string red_wall_1 {gResPath + "images/wall.png"};
-	const std::string red_wall_2 {gResPath + "images/wall_02.png"};
-	const std::string red_wall_3 {gResPath + "images/wall_03.png"};
-	const std::string red_wall_4 {gResPath + "images/wall_04.png"};
-	const std::string red_wall_5 {gResPath + "images/wall_05.png"};
+	const std::string wall_1 {gResPath + "images/wall.png"};
+	const std::string wall_2 {gResPath + "images/wall_02.png"};
+	const std::string wall_3 {gResPath + "images/wall_03.png"};
+	const std::string wall_4 {gResPath + "images/wall_04.png"};
+	const std::string wall_5 {gResPath + "images/wall_05.png"};
 	const std::string green_enemy {gResPath + "images/GreenEnemy.png"};
 	const std::string bullet {gResPath + "images/bullet.png"};
 	const std::string player {gResPath + "images/Player.png"};
