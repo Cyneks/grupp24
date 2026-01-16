@@ -1,22 +1,24 @@
+#include <iostream>
+
 #include "Engine.h"
 #include "Sprite.h"
 #include "Constants.h"
-#include <iostream>
-namespace demo{
 
-    Engine::Engine() : win(nullptr), ren(nullptr), font(nullptr), running(true){
+namespace grupp24{
+
+    Engine::Engine() : window(nullptr), renderer(nullptr), font(nullptr), running(true){
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0) {
             throw std::runtime_error("SDL_Init failed");
         }
 
         try {
-            win = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
-            if(!win) {
+            window = SDL_CreateWindow("Ett spel", cnts::gScreenWidth, cnts::gScreenHeight,0);
+            if(!window) {
                 throw std::runtime_error("Window creation failed");
             }
 
-            ren = SDL_CreateRenderer(win, NULL);
-            if(!ren){
+            renderer = SDL_CreateRenderer(window, NULL);
+            if(!renderer){
                 throw std::runtime_error("Renderer creation failed");
             }
 
@@ -24,35 +26,37 @@ namespace demo{
                 throw std::runtime_error("TTF_Init failed");
             }
 
-            font = TTF_OpenFont((cnts::gResPath + "fonts/INKFREE.TTF").c_str(), 24);
+            font = TTF_OpenFont((cnts::gResPath + "fonts/INKFREE.TTF").c_str(), 36);
             if(!font){
                 throw std::runtime_error("Font load failed");
             }
         } catch (const std::runtime_error&) {
-            if (font) TTF_CloseFont(font);
+            if (font) {TTF_CloseFont(font);}
             TTF_Quit();
-            if (ren) SDL_DestroyRenderer(ren);
-            if (win) SDL_DestroyWindow(win);
+            if (renderer) {SDL_DestroyRenderer(renderer);}
+            if (window) {SDL_DestroyWindow(window);}
             SDL_Quit();
             throw;
         }
     }
 
     Engine::~Engine(){
+        added.clear();
+        removed.clear();
         sprites.clear();
-        if (font) TTF_CloseFont(font);
+        if (font) {TTF_CloseFont(font);}
         TTF_Quit();
-        if (ren) SDL_DestroyRenderer(ren);
-        if (win) SDL_DestroyWindow(win);
+        if (renderer) {SDL_DestroyRenderer(renderer);}
+        if (window) {SDL_DestroyWindow(window);}
         SDL_Quit();
     }
 
-    void Engine::add(SpritePtr spr){
-        added.push_back(spr);
+    void Engine::add(SpritePtr sprite){
+        added.push_back(sprite);
     }
 
-    void Engine::remove(SpritePtr spr){
-        removed.push_back(spr);
+    void Engine::remove(SpritePtr sprite){
+        removed.push_back(sprite);
     }
 
     void Engine::clearSprites() {
@@ -72,8 +76,8 @@ namespace demo{
     }
 
     void Engine::run(){
-        const int FPS = 60; // Frames Per Second
-        const int TICKINTERVAL = 1000 / FPS; // In miliseconds
+        const int FPS = 60;
+        const int TICKINTERVAL = 1000 / FPS;
 
         if(startCallBack){
             startCallBack();
@@ -84,22 +88,27 @@ namespace demo{
             SDL_Event event;
             while (SDL_PollEvent(&event)){
                 switch (event.type){
-                    case SDL_EVENT_QUIT:
-                        running = false; break;
-                    case SDL_EVENT_MOUSE_BUTTON_DOWN:
-                        for(SpritePtr spr : sprites)
-                            spr->onMouseDown(event);
+                    case SDL_EVENT_QUIT:{
+                        running = false; 
                         break;
-                    case SDL_EVENT_MOUSE_BUTTON_UP:
-                        for (SpritePtr spr : sprites) {
-                            spr->onMouseUp(event);
+                    }
+                    case SDL_EVENT_MOUSE_BUTTON_DOWN:{
+                        for(SpritePtr sprite : sprites){
+                            sprite->onMouseDown(event);
+                        } 
+                        break;
+                    }
+                    case SDL_EVENT_MOUSE_BUTTON_UP:{
+                        for (SpritePtr sprite : sprites) {
+                            sprite->onMouseUp(event);
                         }
                         break;
+                    }
                     case SDL_EVENT_KEY_UP: {
-                        for (SpritePtr spr : sprites) {
-                            spr->onKeyUp();
-                            if(spr->getClearState()){
-                                gameOver = spr->getClearState();
+                        for (SpritePtr sprite : sprites) {
+                            sprite->onKeyUp();
+                            if(sprite->getClearState()){
+                                gameOver = sprite->getClearState();
                             }
                         }
                         if(event.key.key == SDLK_R && gameOver){
@@ -107,63 +116,68 @@ namespace demo{
                             if(startCallBack){
                                 startCallBack();
                             }
+                            gameOver = false;
                         }
                     }
-                    case SDL_EVENT_KEY_DOWN:
+                    case SDL_EVENT_KEY_DOWN:{
                         if(event.key.key == SDLK_ESCAPE){
                             running = false; 
                             break;
                         }
-                        for (SpritePtr spr : sprites) {
-                            spr->onKeyDown(event);
+                        for (SpritePtr sprite : sprites) {
+                            sprite->onKeyDown(event);
                         }
                         break;
-                // Fler händelser utelämnade för minska kodmängden i exemplet
-                } // switch
-            } // while event
+                    }
+                } 
+            } 
 
-            for(SpritePtr spr : sprites)
-                spr->tick();
+            for(SpritePtr sprite : sprites){
+                sprite->tick();
+            }
 
-            for(SpritePtr spr : added)
-                sprites.push_back(spr);
+            for(SpritePtr sprite : added){
+                sprites.push_back(sprite);
+            }
             added.clear();
 
-            for(SpritePtr spr : removed){
-                for(unsigned int pos = 0; pos < sprites.size(); pos++){
-                    auto iter = sprites.begin() + pos;
-                    if (spr == *iter) {
-                        sprites.erase(iter);
+            for(SpritePtr sprite : removed){
+                for(unsigned int position = 0; position < sprites.size(); position++){
+                    auto iterator = sprites.begin() + position;
+                    if (sprite == *iterator) {
+                        sprites.erase(iterator);
                         break;
-                    } // if
-                } // for pos
-            } // for spr
+                    }
+                } 
+            } 
             removed.clear();
 
-            for(SpritePtr sp1 : sprites){
-                for(SpritePtr sp2 : sprites){
-                    if (sp1 != sp2){
-                        if(sp1->collidedWith(sp2)){
-                            sp1->onCollisionWith(sp2);
-                            sp2->onCollisionWith(sp1);
+            for(SpritePtr sprite : sprites){
+                for(SpritePtr otherSprite : sprites){
+                    if (sprite != otherSprite){
+                        if(sprite->collidedWith(otherSprite)){
+                            sprite->onCollisionWith(otherSprite);
+                            otherSprite->onCollisionWith(sprite);
                         }
-                        sp1->interactWith(sp2);
+                        sprite->interactWith(otherSprite);
                     }
                 }
             }
 
-            SDL_SetRenderDrawColor(ren,255,255,255,255);
-            SDL_RenderClear(ren);
-            for(SpritePtr spr : sprites)
-                spr->draw();
-            SDL_RenderPresent(ren);
+            SDL_SetRenderDrawColor(renderer,255,255,255,255);
+            SDL_RenderClear(renderer);
+            for(SpritePtr sprite : sprites){
+                sprite->draw();
+            }
+            SDL_RenderPresent(renderer);
 
             Sint64 delay = nextTick - SDL_GetTicks();
-            if (delay > 0)
-                SDL_Delay(delay); 
-        } // while running
-    } // run
+            if (delay > 0){
+                SDL_Delay(delay);
+            } 
+        } 
+    }
 
-    Engine eng;
+    Engine engine;
     
-} // namspace gui
+}

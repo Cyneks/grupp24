@@ -1,29 +1,30 @@
-#include "Engine.h"
-#include "Sound.h"
 #include <iostream>
 
-namespace demo {
+#include "Engine.h"
+#include "Sound.h"
+
+namespace grupp24 {
     Sound::Sound() {}
 
     Sound::~Sound() {
-        for (auto& s : activeSounds) {
-            SDL_DestroyAudioStream(s->stream);
-            SDL_free(s->buffer);
+        for (auto& sound : activeSounds) {
+            SDL_DestroyAudioStream(sound->stream);
+            SDL_free(sound->buffer);
         }
         activeSounds.clear();
     }
 
     void Sound::play(const std::string& name) {
-        SDL_AudioSpec spec{};
+        SDL_AudioSpec specifier{};
         Uint8* buffer = nullptr;
         Uint32 length = 0;
 
-        if (!SDL_LoadWAV(name.c_str(), &spec, &buffer, &length)) {
+        if (!SDL_LoadWAV(name.c_str(), &specifier, &buffer, &length)) {
             SDL_Log("Failed to load WAV: %s", SDL_GetError());
             return;
         }
 
-        SDL_AudioStream* stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, nullptr, nullptr);
+        SDL_AudioStream* stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &specifier, nullptr, nullptr);
         if (!stream) {
             SDL_Log("Failed to open audio stream: %s", SDL_GetError());
             SDL_free(buffer);
@@ -42,10 +43,10 @@ namespace demo {
         
         activeSounds.erase(
             std::remove_if(activeSounds.begin(), activeSounds.end(),
-                [](const std::unique_ptr<SoundInstance>& s) {
-                    if (SDL_GetAudioStreamAvailable(s->stream) == 0) {
-                        SDL_DestroyAudioStream(s->stream);
-                        SDL_free(s->buffer);
+                [](const std::unique_ptr<SoundInstance>& sound) {
+                    if (SDL_GetAudioStreamAvailable(sound->stream) == 0) {
+                        SDL_DestroyAudioStream(sound->stream);
+                        SDL_free(sound->buffer);
                         return true;
                     }
                     return false;

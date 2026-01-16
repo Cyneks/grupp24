@@ -1,56 +1,61 @@
-#include "Sprite.h"
-#include "Engine.h"
 #include <SDL3_image/SDL_image.h>
 #include <iostream>
-using namespace std;
 
-namespace demo{
-    Sprite::Sprite(string name,float x,float y){
-        //only allow for png pictures? Can add ".png" then.
-        image = IMG_LoadTexture(eng.getRen(), (name).c_str());
+#include "Sprite.h"
+#include "Engine.h"
+
+namespace grupp24{
+    Sprite::Sprite(std::string name,int x,int y){
+        image = IMG_LoadTexture(engine.getRenderer(), (name).c_str());
         if (!image){
-            cerr << "No such file: " << name << endl;
+            std::cerr << "No such file: " << name << std::endl;
             exit(EXIT_FAILURE);
         }
-        rect = {x,y,static_cast<float>(image->w),static_cast<float>(image->h)};
+        setRectangle(x,y,static_cast<int>(image->w), static_cast<int>(image->h));
     }
 
-    void Sprite::changeImage(std::string pic) {
+    void Sprite::changeImage(std::string name) {
         if (image) {
             SDL_DestroyTexture(image);
             image = nullptr;
         }
         
-        image = IMG_LoadTexture(eng.getRen(), (pic).c_str());
+        image = IMG_LoadTexture(engine.getRenderer(), (name).c_str());
         if(!image){
-            cerr << "No such file: " << pic << endl;
+            std::cerr << "No such file: " << name << std::endl;
             exit(EXIT_FAILURE);
         }
         
-        rect = {getRect().x, getRect().y, static_cast<float>(image->w), static_cast<float>(image->h)};
+        setRectangle(getRectangle().x,getRectangle().x,static_cast<int>(image->w), static_cast<int>(image->h));
     }
 
     Sprite::~Sprite(){
-        SDL_DestroyTexture(image);
+        if(image){
+            SDL_DestroyTexture(image);
+        }
     }
 
     void Sprite::draw() const{
-        SDL_RenderTexture(eng.getRen(), image, NULL, &rect);
+        SDL_RenderTexture(engine.getRenderer(), image, NULL, &getRectangle());
     }
 
     void Sprite::move(int dx, int dy) {
-        rect.x += dx; 
-        rect.y += dy; 
+        rectangle.x += dx;
+        rectangle.y += dy; 
     }
 
-    void Sprite::setRect(int x, int y, int w, int h) {
-        rect.x = x;
-        rect.y = y;
-        rect.w = w;
-        rect.h = h;
+    void Sprite::setRectangle(int x, int y, int w, int h) {
+        rectangle.x = x;
+        rectangle.y = y;
+        rectangle.w = w;
+        rectangle.h = h;
     }
 
-    bool Sprite::collidedWith(SpritePtr other) const{
-        return SDL_HasRectIntersectionFloat(&rect, &other->rect);
+    const bool Sprite::collidedWith(SpritePtr other) const{
+        return SDL_HasRectIntersectionFloat(&rectangle, &other->rectangle);
+    }
+
+    void Sprite::setImage(SDL_Texture* newImage){
+        image = newImage;
     }
 }

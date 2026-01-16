@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-namespace demo {
+namespace grupp24 {
     class Sound {
     public:
         Sound();

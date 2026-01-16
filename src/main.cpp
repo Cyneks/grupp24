@@ -1,26 +1,27 @@
-#include "Engine.h"
 #include <memory>
+#include <cstdlib>
+#include <random>
+#include <iostream>
+
+#include "Engine.h"
 #include "Sprite.h"
 #include "Label.h"
 #include "Button.h"
 #include "Sound.h"
-#include <cstdlib>
-#include <random>
-#include <iostream>
-using namespace demo;
-using namespace std;
+
+using namespace grupp24;
 
 class Player;
 class Bullet;
 
-//probably move to cpp and h files
+//spelklass
 class Wall : public Sprite {
 public:
     Wall(int x, int y) : Sprite(cnts::wall_1, x, y){}
     void tick() override {
         if(collided){
             if (health > 0) {
-                eng.playSFX(cnts::wall_hit);
+                engine.playSFX(cnts::wall_hit);
             }
 
             health--;
@@ -45,8 +46,8 @@ public:
             }
         }
         if(health <= 0){
-            eng.playSFX(cnts::wall_break);
-            eng.remove(shared_from_this());
+            engine.playSFX(cnts::wall_break);
+            engine.remove(shared_from_this());
         }
     }
     void onCollisionWith(SpritePtr other) override {
@@ -59,7 +60,7 @@ private:
     int health = 5;
 };
 
-//probably move to cpp and h files
+//spelklass
 class Enemy : public Sprite {
 public:
     Enemy(int x, int y) : Sprite(cnts::green_enemy, x, y){}
@@ -67,21 +68,23 @@ public:
         move(xSpeed, ySpeed);
         xCollision = false;
         yCollision = false;
+        if (getRectangle().y < 0 - getRectangle().h || getRectangle().y > cnts::gScreenHeight || getRectangle().x < 0  - getRectangle().w || getRectangle().x > cnts::gScreenWidth){
+           engine.remove(shared_from_this());
+        }
     }
     
     void interactWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Player>(other)){
-            //spaceship operator?
             if(!xCollision){
-                if(getRect().x < other->getRect().x){ xSpeed = 1; }
-                if(getRect().x > other->getRect().x){ xSpeed = -1; }
-                if(getRect().x == other->getRect().x){ xSpeed = 0; }
+                if(getRectangle().x < other->getRectangle().x){ xSpeed = 1; }
+                if(getRectangle().x > other->getRectangle().x){ xSpeed = -1; }
+                if(getRectangle().x == other->getRectangle().x){ xSpeed = 0; }
             }
 
             if(!yCollision){
-                if(getRect().y < other->getRect().y){ ySpeed = 1; }
-                if(getRect().y > other->getRect().y){ ySpeed = -1; }
-                if(getRect().y == other->getRect().y){ ySpeed = 0; }
+                if(getRectangle().y < other->getRectangle().y){ ySpeed = 1; }
+                if(getRectangle().y > other->getRectangle().y){ ySpeed = -1; }
+                if(getRectangle().y == other->getRectangle().y){ ySpeed = 0; }
             }
         }
     }
@@ -113,12 +116,12 @@ public:
         }
     }
 private:
-    //maybe should already be declared in a moveable sprite class?
     int xSpeed = 1;
     int ySpeed = 1;
     bool xCollision, yCollision;
 };
 
+//spelklass
 class WinText : public Label {
     public:
         WinText(int x, int y, int w, int h) : Label (x, y, w, h, "You win! Press R to play again!"){};
@@ -126,26 +129,27 @@ class WinText : public Label {
         void tick() override {};
 };
 
+//spelklass
 class LoseText : public Label {
     public:
         LoseText(int x, int y, int w, int h) : Label (x, y, w, h, "You lose! Press R to play again!"){};
 
         void tick() override {};
 
-        const bool getClearState() override {
+        const bool getClearState() const override {
             return true;
         }
 };
 
+//spelklass
 class PointCounter : public Label {
     public:
         PointCounter(int x, int y, int w, int h) : Label(x,y,w,h,"Points: 0"){}
         void tick() override {
             if (points >= 10 && !cleared) {
-                eng.playSFX(cnts::win);
+                engine.playSFX(cnts::win_sound);
 
-                //Orka hitta mitten av skärmen lol
-                eng.add(LabelPtr(new WinText(400, 350, 0, 0)));
+                engine.add(LabelPtr(new WinText(300, 350, 0, 0)));
                 cleared = true;
             }
         }
@@ -154,7 +158,11 @@ class PointCounter : public Label {
             setText("Points: " + std::to_string(++points));
         }
 
-        const bool getClearState() override {
+        void setClearState(bool state){
+            cleared = state;
+        }
+
+        const bool getClearState() const override {
             return cleared;
         }
     private:
@@ -162,78 +170,82 @@ class PointCounter : public Label {
         bool cleared = false;
 };
 
+//spelklass
 class Bullet : public Sprite {
 public:
-    Bullet(int x, int y, int xs, int ys, shared_ptr<PointCounter> pc):Sprite(cnts::bullet, x,y), xSpeed(xs), ySpeed(ys), pointCounter(pc){}
+    Bullet(int x, int y, int xs, int ys, std::shared_ptr<PointCounter> pc):Sprite(cnts::bullet, x,y), xSpeed(xs), ySpeed(ys), pointCounter(pc){}
 
     void tick() override {
         move(xSpeed, ySpeed);
         
-        if (getRect().y < 0 - getRect().h || getRect().y > cnts::gScreenHeight || getRect().x < 0  - getRect().w || getRect().x > cnts::gScreenWidth){
-           eng.remove(shared_from_this());
+        if (getRectangle().y < 0 - getRectangle().h || getRectangle().y > cnts::gScreenHeight || getRectangle().x < 0  - getRectangle().w || getRectangle().x > cnts::gScreenWidth){
+           engine.remove(shared_from_this());
         }
     }
 
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
             if(!hit){
-                eng.playSFX(cnts::monster_death);
+                engine.playSFX(cnts::monster_death);
                 hit = true;
                 pointCounter->addPoints();
-                eng.remove(other);
-                eng.remove(shared_from_this());
+                engine.remove(other);
+                engine.remove(shared_from_this());
             }
         }
         
         if (dynamic_pointer_cast<Wall>(other)){
-            eng.remove(shared_from_this());
+            engine.remove(shared_from_this());
         }
     }
 
 private:
     int xSpeed;
     int ySpeed;
-    shared_ptr<PointCounter> pointCounter;
+    std::shared_ptr<PointCounter> pointCounter;
     bool hit = false;
 };
 
-//create random spawn coordinates for enemies
-random_device rd;
-mt19937 gen(rd());
-uniform_int_distribution<int> side(0,1);
-uniform_int_distribution<int> smallX(0, 1);
-uniform_int_distribution<int> smallY(0, 1);
-//uniform_int_distribution<int> largeX(0, cnts::gScreenWidth);
-//uniform_int_distribution<int> largeY(0, cnts::gScreenHeight);
-
+//spelklass
 class EnemySpawner : public Sprite {
 public:
+    EnemySpawner(LabelPtr pc) : pointCounter(dynamic_pointer_cast<PointCounter>(pc)),
+    generator(randomDevice()), side(0,1), smallX(0,1), smallY(0,1){}
     void tick() override {
         spawnRate++;
-        if(spawnRate >= 60){
-            if(side(gen)){
-                int x = cnts::gScreenWidth/2;
-                int y = smallY(gen);
-                eng.add(SpritePtr(new Enemy(x,yPos[y])));
-                spawnRate = 0;
-            } else {
-                int x = smallX(gen);
-                int y = cnts::gScreenHeight/2 - 69;
-                eng.add(SpritePtr(new Enemy(xPos[x],y)));
-                spawnRate = 0;
-            }
-        } //spawnrate if 
+        if(!pointCounter->getClearState()){
+            if(spawnRate >= 60){
+                if(side(generator)){
+                    int x = cnts::gScreenWidth/2;
+                    int y = smallY(generator);
+                    engine.add(SpritePtr(new Enemy(x,yPosition[y])));
+                    spawnRate = 0;
+                } else {
+                    int x = smallX(generator);
+                    int y = cnts::gScreenHeight/2 - 69;
+                    engine.add(SpritePtr(new Enemy(xPosition[x],y)));
+                    spawnRate = 0;
+                }
+            } //spawnrate if 
+        }
     }
 private:
+    std::shared_ptr<PointCounter> pointCounter;
     int spawnRate = 30;
-    int xPos[2] = {0, cnts::gScreenWidth - 69};
-    int yPos[2] = {0, cnts::gScreenHeight - 69};
+    int xPosition[2] = {0, cnts::gScreenWidth - 69};
+    int yPosition[2] = {0, cnts::gScreenHeight - 69};
+
+    std::random_device randomDevice;
+    std::mt19937 generator;
+    std::uniform_int_distribution<int> side;
+    std::uniform_int_distribution<int> smallX;
+    std::uniform_int_distribution<int> smallY;
 };
 
-//probably move to cpp and h files
+//spelklass
 class Player : public Sprite {
 public:
-    Player(int x, int y, LabelPtr label):Sprite(cnts::player, x, y), pointCounter(dynamic_pointer_cast<PointCounter>(label)) {}
+    Player(int x, int y, LabelPtr pc):Sprite(cnts::player, x, y), pointCounter(dynamic_pointer_cast<PointCounter>(pc)) {}
     void tick() override {
         move(xSpeed, ySpeed);
 
@@ -242,15 +254,16 @@ public:
         }
 
         if (pointCounter->getClearState()) {
-            eng.remove(shared_from_this());
+            engine.remove(shared_from_this());
         }
     }
 
     void onCollisionWith(SpritePtr other) override {
         if(dynamic_pointer_cast<Enemy>(other)){
-            eng.playSFX(cnts::player_death);
-            eng.add(LabelPtr(new LoseText(400, 350, 0, 0)));
-            eng.remove(shared_from_this());
+            engine.playSFX(cnts::player_death);
+            engine.add(LabelPtr(new LoseText(300, 350, 0, 0)));
+            pointCounter->setClearState(true);
+            engine.remove(shared_from_this());
         }
         
         if (dynamic_pointer_cast<Wall>(other)){
@@ -268,7 +281,7 @@ public:
                 ySpeed = 0;
             }
                       
-        } //wall collision
+        }
     }
 
 	void onKeyDown(const SDL_Event& event) {
@@ -305,31 +318,27 @@ public:
 
         if (attackTimer == 35) {
             if(key_states[SDL_SCANCODE_UP]){
-                eng.playSFX(cnts::gunshot);
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, -10,pointCounter));
-                eng.add(spr);
+                engine.playSFX(cnts::gunshot);
+                engine.add(SpritePtr(new Bullet(getRectangle().x, getRectangle().y, 0, -10,pointCounter)));
 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_RIGHT]){
-                eng.playSFX(cnts::gunshot);
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 10, 0,pointCounter));
-                eng.add(spr);
+                engine.playSFX(cnts::gunshot);
+                engine.add(SpritePtr(new Bullet(getRectangle().x, getRectangle().y, 10, 0,pointCounter)));
                 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_DOWN]){
-                eng.playSFX(cnts::gunshot);
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, 0, 10,pointCounter));
-                eng.add(spr);
+                engine.playSFX(cnts::gunshot);
+                engine.add(SpritePtr(new Bullet(getRectangle().x, getRectangle().y, 0, 10,pointCounter)));
                 
                 attackTimer = 0;
             } else if(key_states[SDL_SCANCODE_LEFT]){
-                eng.playSFX(cnts::gunshot);
-                SpritePtr spr = SpritePtr(new Bullet(getRect().x, getRect().y, -10, 0,pointCounter));
-                eng.add(spr);
+                engine.playSFX(cnts::gunshot);
+                engine.add(SpritePtr(new Bullet(getRectangle().x, getRectangle().y, -10, 0,pointCounter))); 
                 
                 attackTimer = 0;
             }
-        } // onKeyDown   
+        }  
 	}
     void onKeyUp() {
         const bool *key_states = SDL_GetKeyboardState(0);
@@ -344,81 +353,84 @@ private:
     int xSpeed = 0;
     int ySpeed = 0;
     int attackTimer = 35;
-    shared_ptr<PointCounter> pointCounter;
+    std::shared_ptr<PointCounter> pointCounter;
 };
 
+//spelklass
 class ExitButton : public Button {
     public:
-        ExitButton(int x, int y, int w, int h, std::string txt): Button(x, y, w, h, txt) {}
+        ExitButton(int x, int y, int w, int h, std::string text): Button(x, y, w, h, text) {}
 
         void tick() override {}
 
         void onMouseDown(const SDL_Event& event){
             SDL_FPoint point = {event.button.x, event.button.y};
-            if (SDL_PointInRectFloat(&point, &getRect())){
-                setDown(true);
+            if (SDL_PointInRectFloat(&point, &getRectangle())){
+                setPressedState(true);
             }
         }
 
         void onMouseUp(const SDL_Event& event) override {
             SDL_FPoint point = {event.button.x, event.button.y};
-            if (getDownState() && SDL_PointInRectFloat(&point, &getRect())) {
-                eng.stop();
+            if (getPressedState() && SDL_PointInRectFloat(&point, &getRectangle())) {
+                engine.stop();
             }
 
-            setDown(false);
+            setPressedState(false);
         }
 };
 
+//spelklass
 class StartButton : public Button {
     public:
-        StartButton(int x, int y, int w, int h, std::string txt, ButtonPtr exit): Button(x, y, w, h, txt), exitButton(exit) {}
+        StartButton(int x, int y, int w, int h, std::string text, ButtonPtr exit): Button(x, y, w, h, text), exitButton(exit) {}
 
         void tick() override {}
 
         void onMouseDown(const SDL_Event& event){
             SDL_FPoint point = {event.button.x, event.button.y};
-            if (SDL_PointInRectFloat(&point, &getRect())){
-                setDown(true);
+            if (SDL_PointInRectFloat(&point, &getRectangle())){
+                setPressedState(true);
             }
         }
 
         void onMouseUp(const SDL_Event& event) override {
             SDL_FPoint point = {event.button.x, event.button.y};
-            if (getDownState() && SDL_PointInRectFloat(&point, &getRect())) {
+            if (getPressedState() && SDL_PointInRectFloat(&point, &getRectangle())) {
                 LabelPtr label = LabelPtr(new PointCounter(100,100,0,0));
                 SpritePtr player = SpritePtr(new Player(cnts::gScreenWidth/2, cnts::gScreenHeight/2, label));
 
-                eng.add(label);
-                eng.add(player);
-                eng.add(SpritePtr(new Wall(300,200)));
-                eng.add(SpritePtr(new Wall(300,450)));
-                eng.add(SpritePtr(new Wall(700,200)));
-                eng.add(SpritePtr(new Wall(700,450)));
+                engine.add(label);
+                engine.add(player);
+                engine.add(SpritePtr(new Wall(300,200)));
+                engine.add(SpritePtr(new Wall(300,450)));
+                engine.add(SpritePtr(new Wall(700,200)));
+                engine.add(SpritePtr(new Wall(700,450)));
                 for(int i = 0; i < 16; i++){
                     if(i != 7 && i != 8){
-                        eng.add(SpritePtr(new Wall(i*69, 0)));
-                        eng.add(SpritePtr(new Wall(i*69, cnts::gScreenHeight - 69)));
+                        engine.add(SpritePtr(new Wall(i*69, 0)));
+                        engine.add(SpritePtr(new Wall(i*69, cnts::gScreenHeight - 69)));
                     }
                 }
                 for(int i = 1; i < 10; i++){
                     if(i != 4 && i != 5){
-                        eng.add(SpritePtr(new Wall(0, i*69)));
-                        eng.add(SpritePtr(new Wall(cnts::gScreenWidth - 69, i*69)));
+                        engine.add(SpritePtr(new Wall(0, i*69)));
+                        engine.add(SpritePtr(new Wall(cnts::gScreenWidth - 69, i*69)));
                     }
                 }
-                eng.add(SpritePtr(new EnemySpawner()));
-                eng.playSFX(cnts::start_game);
-                eng.remove(exitButton);
-                eng.remove(shared_from_this());
+                engine.add(SpritePtr(new EnemySpawner(label)));
+                engine.playSFX(cnts::start_game);
+                engine.remove(exitButton);
+                engine.remove(shared_from_this());
             }
 
-            setDown(false);
+            setPressedState(false);
         }
     private:
         ButtonPtr exitButton;
 };
 
+//spelklass
 class Background : public Sprite {
     public:
         Background(int x, int y) : Sprite(cnts::grass, x, y) {}
@@ -435,16 +447,16 @@ public:
         ButtonPtr exitButton = ButtonPtr(new ExitButton(490, 350, 10, 10, "Exit"));
         ButtonPtr startButton = ButtonPtr(new StartButton(480, 250, 10, 10, "Start", exitButton));
 
-        eng.add(background);
-        eng.add(exitButton);
-        eng.add(startButton);
+        engine.add(background);
+        engine.add(exitButton);
+        engine.add(startButton);
     }
 };
 
 //this is more closely attahced to the game engine and not the gameprogrammer
 //aka main function is a engine class and should not be touched by the gameprogrammer
 int main(){
-    Game g;    
-    eng.setStartCallBack([&]() {g.start();});
-    eng.run();
+    Game game;    
+    engine.setStartCallBack([&]() {game.start();});
+    engine.run();
 }
