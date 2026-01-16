@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "Constants.h"
 
+//spelmotorklass
 namespace grupp24{
 
     Engine::Engine() : window(nullptr), renderer(nullptr), font(nullptr), running(true){

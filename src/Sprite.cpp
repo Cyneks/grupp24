@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "Engine.h"
 
+//spelmotorklass
 namespace grupp24{
     Sprite::Sprite(std::string name,int x,int y){
         image = IMG_LoadTexture(engine.getRenderer(), (name).c_str());

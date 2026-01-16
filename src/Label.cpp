@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Label.h"
 
+//spelmotorklass
 namespace grupp24{
     Label::Label(int x, int y, int w, int h, std::string newText) : text(newText){
         setRectangle(x, y, w, h);

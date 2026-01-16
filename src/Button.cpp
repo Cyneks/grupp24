@@ -1,6 +1,7 @@
 #include "Button.h"
 #include "Engine.h"
 
+//spelmotorklass
 namespace grupp24{
     Button::Button(int x, int y, int w, int h, std::string text) : Label(x, y, w, h, text) {
         draw();
