@@ -6,7 +6,6 @@
 
 //spelmotorklass
 namespace grupp24{
-
     Engine::Engine() : window(nullptr), renderer(nullptr), font(nullptr), running(true){
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0) {
             throw std::runtime_error("SDL_Init failed");
@@ -180,5 +179,4 @@ namespace grupp24{
     }
 
     Engine engine;
-    
 }
