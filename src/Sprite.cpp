@@ -6,13 +6,13 @@
 
 //spelmotorklass
 namespace grupp24{
-    Sprite::Sprite(std::string name,float x,float y){
+    Sprite::Sprite(std::string name,int x,int y){
         image = IMG_LoadTexture(engine.getRenderer(), (name).c_str());
         if (!image){
             std::cerr << "No such file: " << name << std::endl;
             exit(EXIT_FAILURE);
         }
-        rectangle = {x,y,static_cast<float>(image->w), static_cast<float>(image->h)};
+        setRectangle(x,y,static_cast<int>(image->w), static_cast<int>(image->h));
     }
 
     void Sprite::changeImage(std::string name) {
@@ -27,7 +27,7 @@ namespace grupp24{
             exit(EXIT_FAILURE);
         }
         
-        rectangle = {getRectangle().x, getRectangle().y,static_cast<float>(image->w), static_cast<float>(image->h)};
+        setRectangle(getRectangle().x,getRectangle().y,static_cast<int>(image->w), static_cast<int>(image->h));
     }
 
     Sprite::~Sprite(){
