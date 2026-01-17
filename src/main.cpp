@@ -23,7 +23,6 @@ public:
             if (health > 0) {
                 engine.playSFX(cnts::wall_hit);
             }
-
             health--;
             collided = false;
         }

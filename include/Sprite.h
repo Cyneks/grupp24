@@ -30,7 +30,7 @@ namespace grupp24{
 
         protected:
             Sprite() = default;
-            Sprite(std::string name, int x,int y);
+            Sprite(std::string name, float x,float y);
             SDL_FRect& getMutableRectangle() { return rectangle; }
             void setRectangle(int x, int y, int w, int h);
             SDL_Texture* getImage() {return image;}
